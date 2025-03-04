@@ -169,16 +169,16 @@ namespace BingLibrary.Vision.Cameras
             var nRet = _myCamera.MV_CC_CloseDevice_NET();
             if (HKCameraCtrl.MV_OK != nRet) return;
             nRet = _myCamera.MV_CC_DestroyDevice_NET();
-            //try
-            //{
-            //    if (IntPtr.Zero != m_ConvertDstBuf)
-            //    {
-            //        Marshal.Release(m_ConvertDstBuf);
-            //        m_ConvertDstBuf = IntPtr.Zero;
-            //    }
-            //}
-            //catch { }
-         
+            try
+            {
+                if (IntPtr.Zero != m_ConvertDstBuf)
+                {
+                    Marshal.FreeHGlobal(m_ConvertDstBuf);
+                    m_ConvertDstBuf = IntPtr.Zero;
+                }
+            }
+            catch { }
+
             if (HKCameraCtrl.MV_OK != nRet) return;
         }
 
