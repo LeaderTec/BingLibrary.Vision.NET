@@ -7,6 +7,8 @@ using BingLibrary.Vision.Cameras;
 using ZstdSharp.Unsafe;
 using System.Threading;
 using HalconDotNet;
+using System.Drawing;
+using System.Threading.Tasks;
 
 namespace BingLibrary.Vision.NET.Test.ViewModels
 {
@@ -120,6 +122,8 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
 
         private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1);
 
+        private BingLibrary.Tools.AsyncQueue<Bitmap> bimaps = new Tools.AsyncQueue<Bitmap>();
+
         [RelayCommand]
         private async void Start()
         {
@@ -139,26 +143,35 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
 
                     camera.StartWith_Continue(async x =>
                     {
-                        await semaphoreSlim.WaitAsync(0);
-                        HImage image = TransToHimage.ConvertBitmapToHImage(x);
-                        ImageWindowData.DisplayImage(image);
-                        ImageWindowData.RefreshWindow();
-                        semaphoreSlim.Release();
+                        await bimaps.EnqueueAsync(x);
+                        _ = displayImage();
                     });
                 }
                 else
                 {
                     camera.StartWith_SoftTriggerModel(async x =>
                     {
-                        await semaphoreSlim.WaitAsync(0);
-                        HImage image = TransToHimage.ConvertBitmapToHImage(x);
-                        ImageWindowData.DisplayImage(image);
-                        ImageWindowData.RefreshWindow();
-                        semaphoreSlim.Release();
+                        await bimaps.EnqueueAsync(x);
+                        _ = displayImage();
                     });
                 }
             }
             catch { }
+        }
+
+        private async Task displayImage()
+        {
+            await semaphoreSlim.WaitAsync(0);
+            if (bimaps.Count > 0)
+            {
+                Bitmap bitmap = await bimaps.DequeueAsync();
+                HImage image = TransToHimage.ConvertBitmapToHImage(bitmap);
+                bitmap?.Dispose();
+                ImageWindowData.DisplayImage(image);
+                ImageWindowData.RefreshWindow();
+            }
+
+            semaphoreSlim.Release();
         }
 
         [RelayCommand]
