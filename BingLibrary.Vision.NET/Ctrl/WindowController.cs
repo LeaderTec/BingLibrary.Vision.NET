@@ -355,7 +355,7 @@ namespace BingLibrary.Vision
         public async void Repaint()
         {
             await semaphoreSlim.WaitAsync();
-            await hWindowControlWPF.Dispatcher.InvokeAsync(() => repaint(hWindowControlWPF.HalconWindow));
+            repaint(hWindowControlWPF.HalconWindow);
             await semaphoreSlim.Release();
         }
 

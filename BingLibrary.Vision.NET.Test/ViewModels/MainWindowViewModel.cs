@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using BingLibrary.Vision.Cameras;
 using ZstdSharp.Unsafe;
 using System.Threading;
+using HalconDotNet;
 
 namespace BingLibrary.Vision.NET.Test.ViewModels
 {
@@ -139,7 +140,8 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
                     camera.StartWith_Continue(async x =>
                     {
                         await semaphoreSlim.WaitAsync(0);
-                        ImageWindowData.DisplayImage(TransToHimage.ConvertBitmapToHImage(x));
+                        HImage image = TransToHimage.ConvertBitmapToHImage(x);
+                        ImageWindowData.DisplayImage(image);
                         ImageWindowData.RefreshWindow();
                         semaphoreSlim.Release();
                     });
@@ -149,7 +151,8 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
                     camera.StartWith_SoftTriggerModel(async x =>
                     {
                         await semaphoreSlim.WaitAsync(0);
-                        ImageWindowData.DisplayImage(TransToHimage.ConvertBitmapToHImage(x));
+                        HImage image = TransToHimage.ConvertBitmapToHImage(x);
+                        ImageWindowData.DisplayImage(image);
                         ImageWindowData.RefreshWindow();
                         semaphoreSlim.Release();
                     });
@@ -194,7 +197,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
                 camera.GetExpouseTime(out ulong value1);
                 ExpouseTime = value1.ToString();
                 camera.GetGain(out float value2);
-                ExpouseTime = value2.ToString();
+                Gain = value2.ToString();
                 camera.GetFrameRate(out float value3);
                 FrameRate = value3.ToString();
             }
