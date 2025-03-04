@@ -13,6 +13,7 @@ namespace BingLibrary.Vision
         public HWindowControlWPF hWindowControlWPF;
 
         public HImage image = new HImage();
+        public HImage imageTemp = new HImage();
 
         private string WaterString = "Powered by Leader";
         private int WaterFontSize = 36;
@@ -355,7 +356,11 @@ namespace BingLibrary.Vision
         public async void Repaint()
         {
             await semaphoreSlim.WaitAsync();
-            repaint(hWindowControlWPF.HalconWindow);
+            imageTemp?.Dispose();
+            imageTemp = new HImage(image);
+            HImage baseImageTemp = new HImage(baseImage);
+            repaint(hWindowControlWPF.HalconWindow, image, baseImageTemp);
+
             await semaphoreSlim.Release();
         }
 
@@ -563,7 +568,7 @@ namespace BingLibrary.Vision
         //    window.WriteString("");
         //}
 
-        private void repaint(HalconDotNet.HWindow window)
+        private void repaint(HalconDotNet.HWindow window, HImage hImage, HImage baseImage)
         {
             try
             {
@@ -596,7 +601,7 @@ namespace BingLibrary.Vision
                 }
 
                 window.SetPart(row1, column1, row2, column2);
-                window.DispObj(image);
+                window.DispObj(hImage);
 
                 drawPixelGridIfNecessary(window, row1, column1, row2, column2);
 
@@ -954,8 +959,9 @@ namespace BingLibrary.Vision
         /// </summary>
         private void adaptiveBaseImage()
         {
-            baseImage.GetImageSize(out int imageWide, out int imageHigh);
+            //baseImage.GetImageSize(out int imageWide, out int imageHigh);
             hWindowControlWPF.HalconWindow.SetPart(0, 0, (int)(hWindowControlWPF.ActualHeight - 1), (int)(hWindowControlWPF.ActualWidth - 1));
+            //hWindowControlWPF.HalconWindow.SetPart(0, 0, (int)(imageHigh - 1), (int)(imageWide - 1));
         }
 
         #endregion ±³¾°·½¸ñ

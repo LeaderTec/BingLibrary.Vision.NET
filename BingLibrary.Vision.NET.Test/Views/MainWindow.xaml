@@ -5,7 +5,7 @@
     xmlns:bingVision="clr-namespace:BingLibrary.Vision;assembly=BingLibrary.Vision.NET"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:prism="http://prismlibrary.com/"
+    xmlns:prism="http://prismlibrary.com/" FontFamily="fangsong"
     Title="{Binding Title}"
     Width="960"
     Height="690"
@@ -202,6 +202,7 @@
                         </Grid>
                     </Grid>
                 </Border>
+                <TextBlock Text="{Binding Status}" Margin="5" FontWeight="Bold"></TextBlock>
             </DockPanel>
         </Grid>
     </Grid>

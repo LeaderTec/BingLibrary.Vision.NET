@@ -9,6 +9,7 @@ using System.Threading;
 using HalconDotNet;
 using System.Drawing;
 using System.Threading.Tasks;
+using System;
 
 namespace BingLibrary.Vision.NET.Test.ViewModels
 {
@@ -65,6 +66,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
                 CameraNames.Add(item);
             }
         }
+        [ObservableProperty] string _status;
 
         [ObservableProperty] private bool _isEnabled1 = true;
         [ObservableProperty] private bool _isEnabled2 = true;
@@ -87,7 +89,13 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         {
             try
             {
-                IsEnabled2 = camera.InitDevice(CameraNames[CameraNameIndex].Split(";")[0]);
+                string camName = CameraNames[CameraNameIndex].Split(";")[0];
+                if (String.IsNullOrEmpty(camName))
+                {
+                    Status = "请先设置相机名称。";
+                    return;
+                }
+                IsEnabled2 = camera.InitDevice(camName);
                 Read();
                 if (IsEnabled2)
                 {

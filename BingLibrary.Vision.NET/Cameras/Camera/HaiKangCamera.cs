@@ -50,12 +50,12 @@ namespace BingLibrary.Vision.Cameras
                 if (device.nTLayerType == HKCameraCtrl.MV_GIGE_DEVICE)
                 {
                     HKCameraCtrl.MV_GIGE_DEVICE_INFO gigeInfo = (HKCameraCtrl.MV_GIGE_DEVICE_INFO)HKCameraCtrl.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(HKCameraCtrl.MV_GIGE_DEVICE_INFO));
-                    listsn.Add($"{gigeInfo.chSerialNumber};{gigeInfo.chModelName}");
+                    listsn.Add($"{gigeInfo.chUserDefinedName};{gigeInfo.chModelName}");
                 }
                 else if (device.nTLayerType == HKCameraCtrl.MV_USB_DEVICE)
                 {
                     HKCameraCtrl.MV_USB3_DEVICE_INFO usbInfo = (HKCameraCtrl.MV_USB3_DEVICE_INFO)HKCameraCtrl.ByteToStruct(device.SpecialInfo.stUsb3VInfo, typeof(HKCameraCtrl.MV_USB3_DEVICE_INFO));
-                    listsn.Add($"{usbInfo.chSerialNumber};{usbInfo.chModelName}");
+                    listsn.Add($"{usbInfo.chUserDefinedName};{usbInfo.chModelName}");
                 }
             }
 
@@ -75,7 +75,7 @@ namespace BingLibrary.Vision.Cameras
                 if (item.nTLayerType == HKCameraCtrl.MV_GIGE_DEVICE)
                 {
                     HKCameraCtrl.MV_GIGE_DEVICE_INFO gigeInfo = (HKCameraCtrl.MV_GIGE_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stGigEInfo, typeof(HKCameraCtrl.MV_GIGE_DEVICE_INFO));
-                    if (gigeInfo.chSerialNumber.Equals(CamSN))
+                    if (gigeInfo.chUserDefinedName.Equals(CamSN))
                     {
                         camerainfo = item;
                         selectSNflag = true;
@@ -85,7 +85,7 @@ namespace BingLibrary.Vision.Cameras
                 else if (item.nTLayerType == HKCameraCtrl.MV_USB_DEVICE)
                 {
                     HKCameraCtrl.MV_USB3_DEVICE_INFO usbInfo = (HKCameraCtrl.MV_USB3_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stUsb3VInfo, typeof(HKCameraCtrl.MV_USB3_DEVICE_INFO));
-                    if (usbInfo.chSerialNumber.Equals(CamSN))
+                    if (usbInfo.chUserDefinedName.Equals(CamSN))
                     {
                         camerainfo = item;
                         selectSNflag = true;
