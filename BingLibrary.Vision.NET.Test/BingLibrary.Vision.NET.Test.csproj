@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>panda.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="panda.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="HandyControl" Version="3.5.1" />
+    <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BingLibrary.Vision.NET\BingLibrary.Vision.NET.csproj" />
+  </ItemGroup>
+
+
+	<ItemGroup>
+
+		 
+		<Reference Include="halcondotnetxl">
+			<HintPath>C:\Program Files\MVTec\HALCON-20.11-Steady\bin\dotnet35\halcondotnetxl.dll</HintPath>
+		</Reference>
+		<Reference Include="hdevenginedotnetxl">
+			<HintPath>C:\Program Files\MVTec\HALCON-20.11-Steady\bin\dotnet35\hdevenginedotnetxl.dll</HintPath>
+		</Reference>
+	
+	</ItemGroup>
+	
+	
+</Project>

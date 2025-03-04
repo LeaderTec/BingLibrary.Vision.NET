@@ -1,0 +1,206 @@
+﻿<Window
+    x:Class="BingLibrary.Vision.NET.Test.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:bingVision="clr-namespace:BingLibrary.Vision;assembly=BingLibrary.Vision.NET"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:prism="http://prismlibrary.com/"
+    Title="{Binding Title}"
+    Width="960"
+    Height="690"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    WindowState="Maximized">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <bingVision:BingImageWindow WindowData="{Binding ImageWindowData, Mode=TwoWay}" />
+        </Grid>
+        <Grid Grid.Column="1">
+            <DockPanel LastChildFill="False">
+                <hc:ComboBox
+                    Margin="5"
+                    hc:InfoElement.Title="相机类型"
+                    hc:InfoElement.TitlePlacement="Left"
+                    hc:InfoElement.TitleWidth="120"
+                    DockPanel.Dock="Top"
+                    ItemsSource="{Binding CameraBrands}"
+                    SelectedIndex="{Binding CameraBrandIndex}" />
+
+                <hc:ComboBox
+                    Margin="5"
+                    hc:InfoElement.Title="相机选择"
+                    hc:InfoElement.TitlePlacement="Left"
+                    hc:InfoElement.TitleWidth="120"
+                    DockPanel.Dock="Top"
+                    ItemsSource="{Binding CameraNames}"
+                    SelectedIndex="{Binding CameraNameIndex}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DropDownOpened">
+                            <i:InvokeCommandAction Command="{Binding GetCameraNamesCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </hc:ComboBox>
+
+                <Grid DockPanel.Dock="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <Button
+                            Width="100"
+                            Height="36"
+                            Margin="15"
+                            Command="{Binding OpenCommand}"
+                            Content="打开相机"
+                            IsEnabled="{Binding IsEnabled1}"
+                            Style="{StaticResource ButtonDashed}" />
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <Button
+                            Width="100"
+                            Height="36"
+                            Margin="15"
+                            Command="{Binding CloseCommand}"
+                            Content="关闭相机"
+                            IsEnabled="{Binding IsEnabled2}"
+                            Style="{StaticResource ButtonDashed}" />
+                    </Grid>
+                </Grid>
+                <Grid DockPanel.Dock="Top" IsEnabled="{Binding IsEnabled3}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <RadioButton
+                            Width="100"
+                            Margin="5"
+                            Content="连续模式"
+                            GroupName="camera"
+                            IsChecked="{Binding IsContinueGrab}" />
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <RadioButton
+                            Width="100"
+                            Margin="5"
+                            Content="触发模式"
+                            GroupName="camera" />
+                    </Grid>
+                </Grid>
+                <Grid DockPanel.Dock="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <Button
+                            Width="100"
+                            Height="36"
+                            Margin="15,5,15,5"
+                            Command="{Binding StartCommand}"
+                            Content="开始拍照"
+                            IsEnabled="{Binding IsEnabled4}"
+                            Style="{StaticResource ButtonDashed}" />
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <Button
+                            Width="100"
+                            Height="36"
+                            Margin="15,5,15,5"
+                            Command="{Binding StopCommand}"
+                            Content="停止拍照"
+                            IsEnabled="{Binding IsEnabled5}"
+                            Style="{StaticResource ButtonDashed}" />
+                    </Grid>
+                </Grid>
+                <Grid DockPanel.Dock="Top" IsEnabled="{Binding IsEnabled6}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <CheckBox
+                            Width="100"
+                            Height="36"
+                            Margin="15,25,15,15"
+                            Content="软触发"
+                            IsChecked="{Binding IsSoftTrigger}"
+                            IsEnabled="False" />
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <Button
+                            Width="100"
+                            Height="36"
+                            Margin="15,25,15,15"
+                            Command="{Binding SoftTriggerCommand}"
+                            Content="软触发拍照"
+                            Style="{StaticResource ButtonDashed}" />
+                    </Grid>
+                </Grid>
+
+                <Border
+                    Margin="5"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    DockPanel.Dock="Top"
+                    IsEnabled="{Binding IsEnabled7}">
+                    <Grid Height="120">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <UniformGrid Rows="2">
+                                <Button
+                                    Width="80"
+                                    Margin="5" Height="36"
+                                    Command="{Binding ReadCommand}"
+                                    Content="读  取"
+                                    Style="{StaticResource ButtonDashed}" />
+                                <Button
+                                    Width="80"
+                                    Margin="5"  Height="36"
+                                    Command="{Binding WriteCommand}"
+                                    Content="写  入"
+                                    Style="{StaticResource ButtonDashed}" />
+                            </UniformGrid>
+                        </Grid>
+
+                        <Grid Grid.Column="1">
+                            <UniformGrid Rows="3">
+                                <hc:TextBox
+                                    Margin="5"
+                                    hc:InfoElement.Title="曝光"
+                                    hc:InfoElement.TitlePlacement="Left"
+                                    hc:InfoElement.TitleWidth="40"
+                                    Style="{StaticResource TextBoxExtend}"
+                                    Text="{Binding ExpouseTime}" />
+                                <hc:TextBox
+                                    Margin="5"
+                                    hc:InfoElement.Title="增益"
+                                    hc:InfoElement.TitlePlacement="Left"
+                                    hc:InfoElement.TitleWidth="40"
+                                    Style="{StaticResource TextBoxExtend}"
+                                    Text="{Binding Gain}" />
+                                <hc:TextBox
+                                    Margin="5"
+                                    hc:InfoElement.Title="帧率"
+                                    hc:InfoElement.TitlePlacement="Left"
+                                    hc:InfoElement.TitleWidth="40"
+                                    IsEnabled="False"
+                                    Style="{StaticResource TextBoxExtend}"
+                                    Text="{Binding FrameRate}" />
+                            </UniformGrid>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </DockPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-Windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <UseWPF>true</UseWPF>
+
+	  <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BingLibraryLite" Version="3.0.0.2-pre" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
+  </ItemGroup>
+	<ItemGroup>
+	
+		<Reference Include="Basler.Pylon">
+		  <HintPath>Cameras\CameraDlls\Basler.Pylon.dll</HintPath>
+		</Reference>
+	
+		<Reference Include="GxIAPINET">
+		  <HintPath>Cameras\CameraDlls\GxIAPINET.dll</HintPath>
+		</Reference>
+	
+		<Reference Include="halcondotnetxl">
+			<HintPath>C:\Program Files\MVTec\HALCON-20.11-Steady\bin\dotnet35\halcondotnetxl.dll</HintPath>
+		</Reference>
+		<Reference Include="hdevenginedotnetxl">
+			<HintPath>C:\Program Files\MVTec\HALCON-20.11-Steady\bin\dotnet35\hdevenginedotnetxl.dll</HintPath>
+		</Reference>
+		<Reference Include="Mv3dLpNet">
+		  <HintPath>Cameras\CameraDlls\Mv3dLpNet.dll</HintPath>
+		</Reference>
+		<Reference Include="MVSDK_Net">
+		  <HintPath>Cameras\CameraDlls\MVSDK_Net.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+</Project>
