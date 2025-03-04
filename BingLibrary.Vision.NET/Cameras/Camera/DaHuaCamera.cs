@@ -1,5 +1,6 @@
 ﻿using MVSDK_Net;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace BingLibrary.Vision.Cameras.Camera
@@ -62,7 +63,7 @@ namespace BingLibrary.Vision.Cameras.Camera
                             Marshal.PtrToStructure(
                                 deviceList.pDevInfo + Marshal.SizeOf(typeof(IMVDefine.IMV_DeviceInfo)) * i,
                                 typeof(IMVDefine.IMV_DeviceInfo));
-                    listsn.Add(deviceInfo.cameraKey);
+                    listsn.Add($"{deviceInfo.cameraKey};{deviceInfo.modelName}");
                 }
             }
 

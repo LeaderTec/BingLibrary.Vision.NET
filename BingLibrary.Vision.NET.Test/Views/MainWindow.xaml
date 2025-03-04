@@ -25,7 +25,7 @@
                     Margin="5"
                     hc:InfoElement.Title="相机类型"
                     hc:InfoElement.TitlePlacement="Left"
-                    hc:InfoElement.TitleWidth="120"
+                    hc:InfoElement.TitleWidth="60"
                     DockPanel.Dock="Top"
                     ItemsSource="{Binding CameraBrands}"
                     SelectedIndex="{Binding CameraBrandIndex}" />
@@ -34,7 +34,7 @@
                     Margin="5"
                     hc:InfoElement.Title="相机选择"
                     hc:InfoElement.TitlePlacement="Left"
-                    hc:InfoElement.TitleWidth="120"
+                    hc:InfoElement.TitleWidth="60"
                     DockPanel.Dock="Top"
                     ItemsSource="{Binding CameraNames}"
                     SelectedIndex="{Binding CameraNameIndex}">
@@ -159,13 +159,15 @@
                             <UniformGrid Rows="2">
                                 <Button
                                     Width="80"
-                                    Margin="5" Height="36"
+                                    Height="36"
+                                    Margin="5"
                                     Command="{Binding ReadCommand}"
                                     Content="读  取"
                                     Style="{StaticResource ButtonDashed}" />
                                 <Button
                                     Width="80"
-                                    Margin="5"  Height="36"
+                                    Height="36"
+                                    Margin="5"
                                     Command="{Binding WriteCommand}"
                                     Content="写  入"
                                     Style="{StaticResource ButtonDashed}" />

@@ -87,7 +87,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         {
             try
             {
-                IsEnabled2 = camera.InitDevice(CameraNames[CameraNameIndex]);
+                IsEnabled2 = camera.InitDevice(CameraNames[CameraNameIndex].Split(";")[0]);
                 Read();
                 if (IsEnabled2)
                 {

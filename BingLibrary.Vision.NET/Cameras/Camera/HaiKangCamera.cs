@@ -2,6 +2,7 @@ using BingLibrary.Vision.Cameras.CameraSDK.HaiKang;
 using MVSDK_Net;
 using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace BingLibrary.Vision.Cameras
@@ -49,12 +50,12 @@ namespace BingLibrary.Vision.Cameras
                 if (device.nTLayerType == HKCameraCtrl.MV_GIGE_DEVICE)
                 {
                     HKCameraCtrl.MV_GIGE_DEVICE_INFO gigeInfo = (HKCameraCtrl.MV_GIGE_DEVICE_INFO)HKCameraCtrl.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(HKCameraCtrl.MV_GIGE_DEVICE_INFO));
-                    listsn.Add(gigeInfo.chSerialNumber);
+                    listsn.Add($"{gigeInfo.chSerialNumber};{gigeInfo.chModelName}");
                 }
                 else if (device.nTLayerType == HKCameraCtrl.MV_USB_DEVICE)
                 {
                     HKCameraCtrl.MV_USB3_DEVICE_INFO usbInfo = (HKCameraCtrl.MV_USB3_DEVICE_INFO)HKCameraCtrl.ByteToStruct(device.SpecialInfo.stUsb3VInfo, typeof(HKCameraCtrl.MV_USB3_DEVICE_INFO));
-                    listsn.Add(usbInfo.chSerialNumber);
+                    listsn.Add($"{usbInfo.chSerialNumber};{usbInfo.chModelName}");
                 }
             }
 
