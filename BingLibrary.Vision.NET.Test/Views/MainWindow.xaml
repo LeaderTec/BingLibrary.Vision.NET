@@ -5,11 +5,12 @@
     xmlns:bingVision="clr-namespace:BingLibrary.Vision;assembly=BingLibrary.Vision.NET"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:prism="http://prismlibrary.com/" FontFamily="fangsong"
+    xmlns:prism="http://prismlibrary.com/"
     Title="{Binding Title}"
     Width="960"
     Height="690"
     prism:ViewModelLocator.AutoWireViewModel="True"
+    FontFamily="fangsong"
     WindowState="Maximized">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -202,7 +203,18 @@
                         </Grid>
                     </Grid>
                 </Border>
-                <TextBlock Text="{Binding Status}" Margin="5" FontWeight="Bold"></TextBlock>
+                <Button
+                    Width="80"
+                    Margin="5 25 5 5"
+                    HorizontalAlignment="Left"
+                    Command="{Binding NetAdapterCommand}"
+                    Content="网卡设置"
+                    DockPanel.Dock="Top"
+                    Style="{StaticResource ButtonDashed}" />
+                <TextBlock
+                    Margin="5"
+                    FontWeight="Bold"
+                    Text="{Binding Status}" />
             </DockPanel>
         </Grid>
     </Grid>

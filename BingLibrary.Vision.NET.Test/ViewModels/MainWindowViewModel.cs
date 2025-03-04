@@ -10,6 +10,7 @@ using HalconDotNet;
 using System.Drawing;
 using System.Threading.Tasks;
 using System;
+using System.Diagnostics;
 
 namespace BingLibrary.Vision.NET.Test.ViewModels
 {
@@ -66,7 +67,8 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
                 CameraNames.Add(item);
             }
         }
-        [ObservableProperty] string _status;
+
+        [ObservableProperty] private string _status;
 
         [ObservableProperty] private bool _isEnabled1 = true;
         [ObservableProperty] private bool _isEnabled2 = true;
@@ -232,6 +234,27 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             {
                 camera.SetExpouseTime(ulong.Parse(ExpouseTime));
                 camera.SetGain(float.Parse(Gain));
+            }
+            catch { }
+        }
+
+        [RelayCommand]
+        private void NetAdapter()
+        {
+            try
+            {
+                var process = new Process
+                {
+                    StartInfo =
+                    {
+                        WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
+                        UseShellExecute = true,
+                        FileName = $"{AppDomain.CurrentDomain.BaseDirectory}NetAdapterTool\\NetAdapterTool.exe",
+                        CreateNoWindow = true,
+                        Verb = "runas"
+                    }
+                };
+                process.Start();
             }
             catch { }
         }
