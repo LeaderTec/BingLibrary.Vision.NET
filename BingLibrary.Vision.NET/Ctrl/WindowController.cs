@@ -355,13 +355,20 @@ namespace BingLibrary.Vision
         /// </summary>
         public async void Repaint()
         {
-            await semaphoreSlim.WaitAsync();
-            imageTemp?.Dispose();
-            imageTemp = new HImage(image);
-            HImage baseImageTemp = new HImage(baseImage);
-            repaint(hWindowControlWPF.HalconWindow, image, baseImageTemp);
+            if (image != null)
+            {
+                await semaphoreSlim.WaitAsync();
+                try
+                {
+                    imageTemp?.Dispose();
+                    imageTemp = new HImage(image);
+                    HImage baseImageTemp = new HImage(baseImage);
+                    repaint(hWindowControlWPF.HalconWindow, image, baseImageTemp);
+                }
+                catch { }
 
-            await semaphoreSlim.Release();
+                await semaphoreSlim.Release();
+            }
         }
 
         //private void repaint(HalconDotNet.HWindow window)

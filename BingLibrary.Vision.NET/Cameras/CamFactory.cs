@@ -17,12 +17,12 @@ namespace BingLibrary.Vision.Cameras
      * ======================================
     *************************************************************************************/
 
-    public class CamFactory
+    public class CamFactory<T>
     {
         public CamFactory()
-        { if (CameraList == null) CameraList = new List<ICamera>(); }
+        { if (CameraList == null) CameraList = new List<ICamera<T>>(); }
 
-        private static List<ICamera> CameraList { get; set; } = new List<ICamera>() { };
+        private static List<ICamera<T>> CameraList { get; set; } = new List<ICamera<T>>() { };
 
         /// <summary>
         /// 按相机品牌获取相近SN枚举
@@ -31,23 +31,23 @@ namespace BingLibrary.Vision.Cameras
         /// <returns></returns>
         public static List<string> GetDeviceEnum(CameraBrand brand)
         {
-            ICamera camera = null;
+            ICamera<T> camera = null;
             switch (brand)
             {
                 case CameraBrand.HaiKang:
-                    camera = new HaiKangCamera();
+                    camera = new HaiKangCamera<T>();
                     break;
 
                 case CameraBrand.DaHua:
-                    camera = new DaHuaCamera();
+                    camera = new DaHuaCamera<T>();
                     break;
 
                 case CameraBrand.Basler:
-                    camera = new BaslerCamera();
+                    camera = new BaslerCamera<T>();
                     break;
 
                 case CameraBrand.DaHeng:
-                    camera = new DaHengCamera();
+                    camera = new DaHengCamera<T>();
                     break;
 
                 default: break;
@@ -60,25 +60,25 @@ namespace BingLibrary.Vision.Cameras
         /// </summary>
         /// <param name="brand"></param>
         /// <returns></returns>
-        public static ICamera CreatCamera(CameraBrand brand)
+        public static ICamera<T> CreatCamera(CameraBrand brand)
         {
-            ICamera returncamera = null;
+            ICamera<T> returncamera = null;
             switch (brand)
             {
                 case CameraBrand.HaiKang:
-                    returncamera = new HaiKangCamera();
+                    returncamera = new HaiKangCamera<T>();
                     break;
 
                 case CameraBrand.DaHua:
-                    returncamera = new DaHuaCamera();
+                    returncamera = new DaHuaCamera<T>();
                     break;
 
                 case CameraBrand.Basler:
-                    returncamera = new BaslerCamera();
+                    returncamera = new BaslerCamera<T>();
                     break;
 
                 case CameraBrand.DaHeng:
-                    returncamera = new DaHengCamera();
+                    returncamera = new DaHengCamera<T>();
                     break;
 
                 default: break;
@@ -92,14 +92,14 @@ namespace BingLibrary.Vision.Cameras
         /// </summary>
         /// <param name="CamSN"></param>
         /// <returns></returns>
-        public static ICamera GetItem(string CamSN)
+        public static ICamera<T> GetItem(string CamSN)
         {
-            ICamera cameraStandard = null;
+            ICamera<T> cameraStandard = null;
             if (CameraList.Count < 1) return cameraStandard;
 
             foreach (var item in CameraList)
             {
-                if ((item as BaseCamera).SN.Equals(CamSN))
+                if ((item as BaseCamera<T>).SN.Equals(CamSN))
                 {
                     cameraStandard = item;
                     break;
@@ -112,7 +112,7 @@ namespace BingLibrary.Vision.Cameras
         /// 注销相机
         /// </summary>
         /// <param name="decamera"></param>
-        public static void DestroyCamera(ICamera decamera)
+        public static void DestroyCamera(ICamera<T> decamera)
         {
             CameraList?.Remove(decamera);
             decamera?.CloseDevice();

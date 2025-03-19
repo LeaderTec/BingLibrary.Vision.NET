@@ -1,4 +1,5 @@
 using BingLibrary.Vision.Cameras.CameraSDK.HaiKang;
+using BingLibrary.Vision.NET.Cameras.Camera;
 using MVSDK_Net;
 using System.Diagnostics;
 using System.Drawing.Imaging;
@@ -7,14 +8,11 @@ using System.Runtime.InteropServices;
 
 namespace BingLibrary.Vision.Cameras
 {
-    internal class HaiKangCamera : BaseCamera
+    internal class HaiKangCamera<T> : BaseCamera<T>
     {
         public HaiKangCamera() : base()
         {
         }
-
-        [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = false)]
-        public static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
 
         #region param
 
@@ -183,7 +181,11 @@ namespace BingLibrary.Vision.Cameras
             if (HKCameraCtrl.MV_OK != nRet) return;
         }
 
-        public override bool SoftTrigger() => _myCamera.MV_CC_SetCommandValue_NET("TriggerSoftware") == HKCameraCtrl.MV_OK;
+        public override bool SoftTrigger(T tData)
+        {
+            AddTriggerData(tData);
+            return _myCamera.MV_CC_SetCommandValue_NET("TriggerSoftware") == HKCameraCtrl.MV_OK;
+        }
 
         #endregion operate
 
@@ -511,7 +513,7 @@ namespace BingLibrary.Vision.Cameras
                     ImageLockMode.WriteOnly,
                     m_bitmap.PixelFormat
                 );
-                CopyMemory(bitmapData.Scan0, m_ConvertDstBuf, (uint)(bitmapData.Stride * m_bitmap.Height));
+                APublicStaticHelper.CopyMemory(bitmapData.Scan0, m_ConvertDstBuf, (uint)(bitmapData.Stride * m_bitmap.Height));
                 m_bitmap.UnlockBits(bitmapData);
 
                 _myCamera.MV_CC_ClearImageBuffer_NET();

@@ -1,8 +1,14 @@
-﻿namespace BingLibrary.Vision.Cameras
+﻿using System.Collections.Concurrent;
+
+namespace BingLibrary.Vision.Cameras
 {
-    public interface ICamera : IDisposable
+    public interface ICamera<T> : IDisposable
     {
         #region operate
+
+        public void ClearTriggerData();
+
+        public bool TryGetNextTriggerData(out T result);
 
         /// <summary>
         /// 获取相机SN枚举
@@ -64,7 +70,7 @@
         /// 软触发
         /// </summary>
         /// <returns></returns>
-        bool SoftTrigger();
+        bool SoftTrigger(T tData);
 
         #endregion operate
 

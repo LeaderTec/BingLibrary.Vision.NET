@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace BingLibrary.Vision.Cameras
 {
-    internal class DaHengCamera : BaseCamera
+    internal class DaHengCamera<T> : BaseCamera<T>
     {
         public DaHengCamera() : base()
         {
@@ -86,7 +86,7 @@ namespace BingLibrary.Vision.Cameras
             base.Dispose();
         }
 
-        public override bool SoftTrigger()
+        public override bool SoftTrigger(T tData)
         {
             try
             {
@@ -100,6 +100,7 @@ namespace BingLibrary.Vision.Cameras
                 //∑¢ÀÕ»Ì¥•∑¢√¸¡Ó
                 if (null != m_objIGXFeatureControl)
                 {
+                    AddTriggerData(tData);
                     m_objIGXFeatureControl.GetCommandFeature("TriggerSoftware").Execute();
                 }
                 return true;

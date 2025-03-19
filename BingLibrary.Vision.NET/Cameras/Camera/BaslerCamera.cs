@@ -3,7 +3,7 @@ using System.Drawing.Imaging;
 
 namespace BingLibrary.Vision.Cameras
 {
-    internal class BaslerCamera : BaseCamera
+    internal class BaslerCamera<T> : BaseCamera<T>
     {
         #region Parm
 
@@ -92,14 +92,14 @@ namespace BingLibrary.Vision.Cameras
             camera.StreamGrabber.GrabStopped -= OnGrabStopped;
         }
 
-        public override bool SoftTrigger()
+        public override bool SoftTrigger(T tData)
         {
             if (camera == null || !camera.IsConnected) return false;
             if (camera.CanWaitForFrameTriggerReady)
             {
                 camera.WaitForFrameTriggerReady(1000, TimeoutHandling.ThrowException);
             }
-
+            AddTriggerData(tData);
             camera.ExecuteSoftwareTrigger();
 
             return true;

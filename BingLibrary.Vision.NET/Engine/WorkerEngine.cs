@@ -80,6 +80,7 @@ namespace BingLibrary.Vision.Engine
 
                 HalEngine.myEngine.SetProcedurePath(path);
                 devProcedureCalls.Add(name, new HDevProcedureCall(new HDevProcedure(name)));
+                HalEngine.myEngine.UnloadProcedure(name);
                 return true;
             }
             catch { return false; }

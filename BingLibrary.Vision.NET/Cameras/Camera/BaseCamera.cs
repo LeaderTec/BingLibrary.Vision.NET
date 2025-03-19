@@ -1,9 +1,44 @@
-﻿namespace BingLibrary.Vision.Cameras
+﻿using MySqlX.XDevAPI.Common;
+using System.Collections.Concurrent;
+
+namespace BingLibrary.Vision.Cameras
 {
-    internal abstract class BaseCamera : ICamera
+    internal abstract class BaseCamera<T> : ICamera<T>
     {
         protected BaseCamera()
         { ActionGetImage += ResetActionImageSignal; }
+
+        #region 触发Data
+
+        private readonly ConcurrentQueue<T> _pendingTriggerData = new ConcurrentQueue<T>();
+        public IReadOnlyCollection<T> PendingTriggerData => _pendingTriggerData.ToList().AsReadOnly();
+
+        public void ClearTriggerData()
+        {
+            while (TryGetNextTriggerData(out T result))
+            {
+            }
+        }
+
+        // 添加触发数据（线程安全入队）
+        public void AddTriggerData(T data)
+        {
+            if (data != null)
+                _pendingTriggerData.Enqueue(data);
+        }
+
+        public bool TryGetNextTriggerData(out T result)
+        {
+            return _pendingTriggerData.TryDequeue(out result);
+        }
+
+        // 清空队列（可选）
+        public void ClearPendingData()
+        {
+            while (_pendingTriggerData.TryDequeue(out _)) { }
+        }
+
+        #endregion 触发Data
 
         #region Parm
 
@@ -78,7 +113,7 @@
         public bool GrabImageWithSoftTrigger(out Bitmap bitmap, int outtime = 3000)
         {
             bitmap = null;
-            if (!SoftTrigger()) return false;
+            if (!SoftTrigger(default)) return false;
 
             if (ResetGetImageSignal.WaitOne(outtime))
             {
@@ -95,7 +130,7 @@
         /// 软触发
         /// </summary>
         /// <returns></returns>
-        public abstract bool SoftTrigger();
+        public abstract bool SoftTrigger(T tData);
 
         #endregion operate
 

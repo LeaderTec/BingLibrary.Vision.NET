@@ -2,6 +2,7 @@
 
 namespace BingLibrary.Vision.Cameras
 {
+    /*
     internal class 使用示例
     {
         private ICamera camera1, camera2;
@@ -60,4 +61,5 @@ namespace BingLibrary.Vision.Cameras
             camera2.CloseDevice();
         }
     }
+    */
 }

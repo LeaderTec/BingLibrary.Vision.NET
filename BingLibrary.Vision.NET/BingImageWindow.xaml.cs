@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -68,9 +69,16 @@ namespace BingLibrary.Vision
             updatePopupPosition();
         }
 
-        private void parentWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        private async void parentWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             updatePopupPosition();
+            await Task.Delay(10);
+            try
+            {
+                windowData.FitImage();
+                windowData.RefreshWindow();
+            }
+            catch { }
         }
 
         private void updatePopupPosition()
@@ -193,8 +201,8 @@ namespace BingLibrary.Vision
                 var rst = OpenImageDialog();
                 if (rst != "")
                 {
-                    windowData.WindowCtrl.ShowImageToWindow(new HImage(rst));
-                    windowData.WindowCtrl.FitImageToWindow();
+                    windowData.DisplayImage(new HImage(rst));
+                    windowData.RefreshWindow();
                 }
             }
             catch { }
@@ -240,7 +248,12 @@ namespace BingLibrary.Vision
 
         private void Fit_Window(object sender, RoutedEventArgs e)
         {
-            try { windowData.WindowCtrl.FitImageToWindow(); windowData.WindowCtrl.Repaint(); } catch { }
+            try
+            {
+                windowData.FitImage();
+                windowData.RefreshWindow();
+            }
+            catch { }
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -708,6 +721,11 @@ namespace BingLibrary.Vision
             config.DotLine = (sender as CheckBox).IsChecked == true;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
 
+            windowData.WindowCtrl.Repaint();
+        }
+
+        private void iwin_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
             windowData.WindowCtrl.Repaint();
         }
 

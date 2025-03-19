@@ -1,20 +1,16 @@
-﻿using MVSDK_Net;
+﻿using BingLibrary.Vision.NET.Cameras.Camera;
+using MVSDK_Net;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 
 namespace BingLibrary.Vision.Cameras.Camera
 {
-    internal class DaHuaCamera : BaseCamera
+    internal class DaHuaCamera<T> : BaseCamera<T>
     {
         public DaHuaCamera() : base()
         {
         }
-
-      
-
-        [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = false)]
-        public static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
 
         #region param
 
@@ -106,10 +102,11 @@ namespace BingLibrary.Vision.Cameras.Camera
             }
         }
 
-        public override bool SoftTrigger()
+        public override bool SoftTrigger(T tData)
         {
             if (cam.IMV_IsGrabbing())
             {
+                AddTriggerData(tData);
                 //发送一次触发命令
                 //Send Trigger Command
                 int res = IMVDefine.IMV_OK;
@@ -358,7 +355,7 @@ namespace BingLibrary.Vision.Cameras.Camera
                 bitmapRect.Height = bitmap.Height;
                 bitmapRect.Width = bitmap.Width;
                 bmpData = bitmap.LockBits(bitmapRect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
-                CopyMemory(bmpData.Scan0, pSrcData, (uint)(bmpData.Stride * bitmap.Height));
+                APublicStaticHelper.CopyMemory(bmpData.Scan0, pSrcData, (uint)(bmpData.Stride * bitmap.Height));
                 bitmap.UnlockBits(bmpData);
             }
             else if (stFrameInfo.pixelFormat == IMVDefine.IMV_EPixelType.gvspPixelBGR8) //图像格式为BGR8时，无需转码，直接转成bitmap进行保存
@@ -369,7 +366,7 @@ namespace BingLibrary.Vision.Cameras.Camera
                 bitmapRect.Height = bitmap.Height;
                 bitmapRect.Width = bitmap.Width;
                 bmpData = bitmap.LockBits(bitmapRect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
-                CopyMemory(bmpData.Scan0, pSrcData, (uint)(bmpData.Stride * bitmap.Height));
+                APublicStaticHelper.CopyMemory(bmpData.Scan0, pSrcData, (uint)(bmpData.Stride * bitmap.Height));
                 bitmap.UnlockBits(bmpData);
             }
             else //当图像格式为其它时，先转码为BGR24，然后转成bitmap进行保存
@@ -416,7 +413,7 @@ namespace BingLibrary.Vision.Cameras.Camera
                 bitmapRect.Height = bitmap.Height;
                 bitmapRect.Width = bitmap.Width;
                 bmpData = bitmap.LockBits(bitmapRect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
-                CopyMemory(bmpData.Scan0, pDstRGB, (uint)(bmpData.Stride * bitmap.Height));
+                APublicStaticHelper.CopyMemory(bmpData.Scan0, pDstRGB, (uint)(bmpData.Stride * bitmap.Height));
                 bitmap.UnlockBits(bmpData);
 
                 Marshal.FreeHGlobal(pDstRGB);

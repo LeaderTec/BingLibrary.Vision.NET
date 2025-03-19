@@ -16,7 +16,8 @@ namespace BingLibrary.Vision.NET.Test
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
+            containerRegistry.RegisterSingleton<BingLibraryLite.Services.ILoggerService, BingLibraryLite.Logs.SerilogLoggerService>();
+            containerRegistry.RegisterForNavigation<BingLibraryLite.Logs.LoggerServiceWin>("LogWin");
         }
     }
 }

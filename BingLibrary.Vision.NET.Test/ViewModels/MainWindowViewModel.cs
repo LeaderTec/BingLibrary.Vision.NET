@@ -11,9 +11,17 @@ using System.Drawing;
 using System.Threading.Tasks;
 using System;
 using System.Diagnostics;
+using Prism.Regions;
+using BingLibraryLite.Services;
 
 namespace BingLibrary.Vision.NET.Test.ViewModels
 {
+    public class MyTriggerData
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
     public partial class MainWindowViewModel : ObservableObject
     {
         private string _title = "BingLibrary.Vision.NET.Test";
@@ -24,7 +32,10 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             set { SetProperty(ref _title, value); }
         }
 
-        public MainWindowViewModel()
+        private BingLibraryLite.Services.ILoggerService _loggerService;
+        private IRegionManager _regionManager;
+
+        public MainWindowViewModel(IRegionManager regionManager, BingLibraryLite.Services.ILoggerService loggerService)
         {
             IsEnabled1 = true;//打开相机
             IsEnabled2 = false;//关闭相机
@@ -33,10 +44,20 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             IsEnabled5 = false;//停止拍照
             IsEnabled6 = false;//软触发
             IsEnabled7 = false;//参数设置
+
+            _loggerService = loggerService;
+            _regionManager = regionManager;
+            init();
+        }
+
+        private async void init()
+        {
+            await Task.Delay(100);
+            // _regionManager.RequestNavigate("LogWin", "LogWin");
         }
 
         [ObservableProperty] private BingImageWindowData _imageWindowData;
-        private ICamera camera;
+        private ICamera<MyTriggerData> camera;
 
         [ObservableProperty]
         private ObservableCollection<string> _cameraBrands = new ObservableCollection<string>()
@@ -55,16 +76,26 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         [RelayCommand]
         private void GetCameraNames()
         {
-            if (CameraBrandIndex == 1) camera = CamFactory.CreatCamera(CameraBrand.DaHua);
-            else if (CameraBrandIndex == 2) camera = CamFactory.CreatCamera(CameraBrand.Basler);
-            else if (CameraBrandIndex == 3) camera = CamFactory.CreatCamera(CameraBrand.DaHeng);
-            else camera = CamFactory.CreatCamera(CameraBrand.HaiKang);
+            if (CameraBrandIndex == 1) camera = CamFactory<MyTriggerData>.CreatCamera(CameraBrand.DaHua);
+            else if (CameraBrandIndex == 2) camera = CamFactory<MyTriggerData>.CreatCamera(CameraBrand.Basler);
+            else if (CameraBrandIndex == 3) camera = CamFactory<MyTriggerData>.CreatCamera(CameraBrand.DaHeng);
+            else camera = CamFactory<MyTriggerData>.CreatCamera(CameraBrand.HaiKang);
 
             CameraNames.Clear();
             var list = camera.GetListEnum();
             foreach (var item in list)
             {
                 CameraNames.Add(item);
+            }
+            testLog();
+        }
+
+        private async void testLog()
+        {
+            for (int i = 0; i < 200; i++)
+            {
+                _loggerService.Info(i.ToString());
+                await Task.Delay(1);
             }
         }
 
@@ -134,6 +165,8 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
 
         private BingLibrary.Tools.AsyncQueue<Bitmap> bimaps = new Tools.AsyncQueue<Bitmap>();
 
+        private System.Diagnostics.Stopwatch sw = new Stopwatch();
+
         [RelayCommand]
         private async void Start()
         {
@@ -153,6 +186,12 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
 
                     camera.StartWith_Continue(async x =>
                     {
+                        double fc = 0;
+                        if (sw.ElapsedMilliseconds != 0)
+                            fc = 1000.0 / sw.ElapsedMilliseconds;
+
+                        Status = $"耗时：{sw.ElapsedMilliseconds}ms,预估帧率：{fc}";
+                        sw.Restart();
                         await bimaps.EnqueueAsync(x);
                         _ = displayImage();
                     });
@@ -167,21 +206,6 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
                 }
             }
             catch { }
-        }
-
-        private async Task displayImage()
-        {
-            await semaphoreSlim.WaitAsync(0);
-            if (bimaps.Count > 0)
-            {
-                Bitmap bitmap = await bimaps.DequeueAsync();
-                HImage image = TransToHimage.ConvertBitmapToHImage(bitmap);
-                bitmap?.Dispose();
-                ImageWindowData.DisplayImage(image);
-                ImageWindowData.RefreshWindow();
-            }
-
-            semaphoreSlim.Release();
         }
 
         [RelayCommand]
@@ -202,12 +226,45 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             catch { }
         }
 
+        private async Task displayImage()
+        {
+            await semaphoreSlim.WaitAsync();
+            if (bimaps.Count > 0)
+            {
+                bool rst = camera.TryGetNextTriggerData(out MyTriggerData myTriggerData);
+                if (rst)
+                    Status = $"耗时:{sw.ElapsedMilliseconds}ms \r\nID：{myTriggerData.Id}\r\nName：{myTriggerData.Name}";
+                else
+                    Status = $"耗时:{sw.ElapsedMilliseconds}ms";
+                Bitmap bitmap = await bimaps.DequeueAsync();
+                await Task.Run(() =>
+                {
+                    HImage image = TransToHimage.ConvertBitmapToHImage(bitmap);
+                    bitmap?.Dispose();
+                    ImageWindowData.DisplayImage(image);
+                    ImageWindowData.RefreshWindow();
+                });
+            }
+
+            semaphoreSlim.Release();
+        }
+
+        private int myTriggerDataIndex = 0;
+
+        [ObservableProperty] private string _triggerVar = "Hello World";
+
         [RelayCommand]
-        private void SoftTrigger()
+        private async void SoftTrigger()
         {
             try
             {
-                camera.SoftTrigger();
+                for (int i = 1; i < 30; i++)
+                {
+                    await Task.Delay(300);
+                    MyTriggerData myTriggerData = new() { Id = myTriggerDataIndex++, Name = TriggerVar };
+
+                    camera.SoftTrigger(myTriggerData);
+                }
             }
             catch { }
         }
