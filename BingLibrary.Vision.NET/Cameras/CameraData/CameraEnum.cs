@@ -2,6 +2,13 @@
 
 namespace BingLibrary.Vision.Cameras
 {
+    public enum CameraType
+    {
+        Gige,
+        USB,
+        GENTL,
+    }
+
     public enum CameraBrand
     {
         [Description("海康相机")] HaiKang,

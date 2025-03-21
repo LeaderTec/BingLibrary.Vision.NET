@@ -1,4 +1,6 @@
-﻿using BingLibrary.Vision.NET.Cameras.Camera;
+﻿using Basler.Pylon;
+using BingLibrary.Vision.Cameras.CameraSDK.HaiKang;
+using BingLibrary.Vision.NET.Cameras.Camera;
 using MVSDK_Net;
 using System.Drawing.Imaging;
 using System.IO;
@@ -39,10 +41,10 @@ namespace BingLibrary.Vision.Cameras.Camera
 
         #region operate
 
-        public override List<string> GetListEnum()
+        public override List<CameraInfo> GetListEnum()
         {
             GC.Collect();
-            List<string> listsn = new List<string>();
+            List<CameraInfo> cameraInfos = new List<CameraInfo>();
 
             // 设备搜索
             // device search
@@ -61,20 +63,74 @@ namespace BingLibrary.Vision.Cameras.Camera
                             Marshal.PtrToStructure(
                                 deviceList.pDevInfo + Marshal.SizeOf(typeof(IMVDefine.IMV_DeviceInfo)) * i,
                                 typeof(IMVDefine.IMV_DeviceInfo));
-                    listsn.Add($"{deviceInfo.cameraName};{deviceInfo.modelName}");
+
+                    cameraInfos.Add(new CameraInfo()
+                    {
+                        CameraName = deviceInfo.cameraName,
+                        CameraSN = deviceInfo.serialNumber,
+                        CameraBrand = CameraBrand.DaHua,
+                        CameraType =
+                        deviceInfo.nCameraType == IMVDefine.IMV_ECameraType.typeGigeCamera ? CameraType.Gige :
+                        deviceInfo.nCameraType == IMVDefine.IMV_ECameraType.typeU3vCamera ? CameraType.USB :
+                        CameraType.Gige,
+                    });
                 }
             }
 
-            return listsn;
+            return cameraInfos;
         }
 
-        public override bool InitDevice(string CamSN)
+        public override bool InitDevice(CameraInfo cameraInfo)
         {
-            if (string.IsNullOrEmpty(CamSN)) return false;
+            IMVDefine.IMV_DeviceList deviceList = new IMVDefine.IMV_DeviceList();
+            IMVDefine.IMV_EInterfaceType interfaceTp = IMVDefine.IMV_EInterfaceType.interfaceTypeAll;
+            int res = MyCamera.IMV_EnumDevices(ref deviceList, (uint)interfaceTp);
 
-            // 创建设备句柄
-            // Create Device Handle
-            int res = cam.IMV_CreateHandle(IMVDefine.IMV_ECreateHandleMode.modeByDeviceUserID, 0, CamSN);
+            bool selectSNflag = false;
+
+            if (!string.IsNullOrEmpty(cameraInfo.CameraName))
+            {
+                for (int i = 0; i < deviceList.nDevNum; i++)
+                {
+                    IMVDefine.IMV_DeviceInfo item =
+                        (IMVDefine.IMV_DeviceInfo)
+                            Marshal.PtrToStructure(
+                                deviceList.pDevInfo + Marshal.SizeOf(typeof(IMVDefine.IMV_DeviceInfo)) * i,
+                                typeof(IMVDefine.IMV_DeviceInfo));
+
+                    if (item.cameraName.Equals(cameraInfo.CameraName))
+                    {
+                        // 创建设备句柄
+                        // Create Device Handle
+                        res = cam.IMV_CreateHandle(IMVDefine.IMV_ECreateHandleMode.modeByDeviceUserID, 0, cameraInfo.CameraName);
+
+                        selectSNflag = true;
+                        break;
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
+            {
+                for (int i = 0; i < deviceList.nDevNum; i++)
+                {
+                    IMVDefine.IMV_DeviceInfo item =
+                        (IMVDefine.IMV_DeviceInfo)
+                            Marshal.PtrToStructure(
+                                deviceList.pDevInfo + Marshal.SizeOf(typeof(IMVDefine.IMV_DeviceInfo)) * i,
+                                typeof(IMVDefine.IMV_DeviceInfo));
+
+                    if (item.cameraName.Equals(cameraInfo.CameraName))
+                    {
+                        // 创建设备句柄
+                        // Create Device Handle
+                        res = cam.IMV_CreateHandle(IMVDefine.IMV_ECreateHandleMode.modeByCameraKey, 0, cameraInfo.CameraSN);
+
+                        selectSNflag = true;
+                        break;
+                    }
+                }
+            }
+            if (!selectSNflag) return false;
 
             // 打开设备
             // open device

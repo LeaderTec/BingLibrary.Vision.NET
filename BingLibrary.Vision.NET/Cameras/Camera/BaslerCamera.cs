@@ -1,5 +1,7 @@
 ﻿using Basler.Pylon;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.Windows.Navigation;
 
 namespace BingLibrary.Vision.Cameras
 {
@@ -24,21 +26,33 @@ namespace BingLibrary.Vision.Cameras
 
         #region Opr
 
-        public override List<string> GetListEnum()
+        public override List<CameraInfo> GetListEnum()
         {
             listcaminf.Clear();
             listcaminf = CameraFinder.Enumerate();
-            return listcaminf.Select(t => t[CameraInfoKey.SerialNumber]).ToList();
+
+            List<CameraInfo> cameraInfos = new List<CameraInfo>();
+            foreach (var lf in listcaminf)
+            {
+                cameraInfos.Add(new CameraInfo()
+                {
+                    CameraName = lf[CameraInfoKey.DeviceID],
+                    CameraSN = lf[CameraInfoKey.SerialNumber],
+                    CameraType = CameraType.Gige,
+                    CameraBrand = CameraBrand.Basler,
+                });
+            };
+            return cameraInfos;
         }
 
-        public override bool InitDevice(string CamSN)
+        public override bool InitDevice(CameraInfo cameraInfo)
         {
             var listsn = GetListEnum();
-            if (listcaminf.Count < 1 || string.IsNullOrEmpty(CamSN)) return false;
-            currcaminf = listcaminf.Where(t => t[CameraInfoKey.SerialNumber].Equals(CamSN)).FirstOrDefault();
+            if (listcaminf.Count < 1) return false;
+            currcaminf = listcaminf.Where(t => t[CameraInfoKey.SerialNumber].Equals(cameraInfo.CameraSN)).FirstOrDefault();
             if (currcaminf == null) return false;
 
-            camera = new Basler.Pylon.Camera(CamSN);
+            camera = new Basler.Pylon.Camera(cameraInfo.CameraSN);
 
             if (currcaminf != null)
             {

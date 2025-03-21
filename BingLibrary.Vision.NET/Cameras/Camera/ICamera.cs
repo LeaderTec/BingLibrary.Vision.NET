@@ -14,14 +14,14 @@ namespace BingLibrary.Vision.Cameras
         /// 获取相机SN枚举
         /// </summary>
         /// <returns></returns>
-        List<string> GetListEnum();
+        List<CameraInfo> GetListEnum();
 
         /// <summary>
         /// 初始化相机
         /// </summary>
         /// <param name="CamSN"></param>
         /// <returns></returns>
-        bool InitDevice(string CamSN);
+        bool InitDevice(CameraInfo cameraInfo);
 
         /// <summary>
         /// 注销相机

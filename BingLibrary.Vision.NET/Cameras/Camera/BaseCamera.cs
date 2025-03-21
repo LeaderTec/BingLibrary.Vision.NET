@@ -58,9 +58,9 @@ namespace BingLibrary.Vision.Cameras
 
         public abstract void CloseDevice();
 
-        public abstract List<string> GetListEnum();
+        public abstract List<CameraInfo> GetListEnum();
 
-        public abstract bool InitDevice(string CamSN);
+        public abstract bool InitDevice(CameraInfo cameraInfo);
 
         public bool StartWith_Continue(Action<Bitmap> callbackfunc)
         {

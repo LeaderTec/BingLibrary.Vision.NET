@@ -14,6 +14,10 @@ using System.Diagnostics;
 using Prism.Regions;
 using BingLibraryLite.Services;
 
+using System.Collections.ObjectModel;
+
+using System.Collections.Generic;
+
 namespace BingLibrary.Vision.NET.Test.ViewModels
 {
     public class MyTriggerData
@@ -73,6 +77,8 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         [ObservableProperty] private ObservableCollection<string> _cameraNames = new ObservableCollection<string>();
         [ObservableProperty] private int _cameraNameIndex = 0;
 
+        private List<CameraInfo> currentCameraInfos = new List<CameraInfo>();
+
         [RelayCommand]
         private void GetCameraNames()
         {
@@ -82,10 +88,10 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             else camera = CamFactory<MyTriggerData>.CreatCamera(CameraBrand.HaiKang);
 
             CameraNames.Clear();
-            var list = camera.GetListEnum();
-            foreach (var item in list)
+            currentCameraInfos = camera.GetListEnum();
+            foreach (var item in currentCameraInfos)
             {
-                CameraNames.Add(item);
+                CameraNames.Add($"{item.CameraName};{item.CameraSN}");
             }
             testLog();
         }
@@ -122,13 +128,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         {
             try
             {
-                string camName = CameraNames[CameraNameIndex].Split(";")[0];
-                if (String.IsNullOrEmpty(camName))
-                {
-                    Status = "请先设置相机名称。";
-                    return;
-                }
-                IsEnabled2 = camera.InitDevice(camName);
+                IsEnabled2 = camera.InitDevice(currentCameraInfos[CameraNameIndex]);
                 Read();
                 if (IsEnabled2)
                 {

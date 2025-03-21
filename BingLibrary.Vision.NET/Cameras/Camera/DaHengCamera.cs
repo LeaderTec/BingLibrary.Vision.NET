@@ -1,4 +1,6 @@
+using Basler.Pylon;
 using BingLibrary.Vision.Cameras.CameraSDK.DaHeng;
+using BingLibrary.Vision.Cameras.CameraSDK.HaiKang;
 using GxIAPINET;
 using System.Diagnostics;
 
@@ -42,40 +44,67 @@ namespace BingLibrary.Vision.Cameras
 
         #region Operate
 
-        public override List<string> GetListEnum()
+        public override List<CameraInfo> GetListEnum()
         {
             //读取相机列表
             m_objIGXFactory = IGXFactory.GetInstance();
             m_objIGXFactory.Init();
             listCameraInfo.Clear();
             m_objIGXFactory.UpdateDeviceList(200, listCameraInfo);
-            if (listCameraInfo.Count < 1) return new List<string>();
-            List<string> deviceenum = new List<string>();
+            List<CameraInfo> cameraInfos = new List<CameraInfo>();
+            if (listCameraInfo.Count < 1) return cameraInfos;
+
             foreach (var item in listCameraInfo)
             {
-                deviceenum.Add(item.GetSN());
+                cameraInfos.Add(new CameraInfo()
+                {
+                    CameraName = item.GetUserID(),
+                    CameraSN = item.GetSN(),
+                    CameraBrand = CameraBrand.DaHeng,
+                    CameraType = CameraType.Gige,
+                });
             }
-            return deviceenum;
+            return cameraInfos;
         }
 
-        public override bool InitDevice(string CamSN)
+        public override bool InitDevice(CameraInfo cameraInfo)
         {
             GetListEnum();
-            if (listCameraInfo.Count < 1 || string.IsNullOrEmpty(CamSN)) return false;
+            if (listCameraInfo.Count < 1) return false;
 
-            foreach (var item in listCameraInfo)
+            bool selectSNflag = false;
+
+            if (!string.IsNullOrEmpty(cameraInfo.CameraName))
             {
-                if (item.GetSN().Equals(CamSN))
+                foreach (var item in listCameraInfo)
                 {
-                    GXDeviceInfo = item;
-                    break;
+                    if (item.GetUserID().Equals(cameraInfo.CameraName))
+                    {
+                        GXDeviceInfo = item;
+                        selectSNflag = true;
+                        break;
+                    }
                 }
             }
+            else if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
+            {
+                foreach (var item in listCameraInfo)
+                {
+                    if (item.GetSN().Equals(cameraInfo.CameraSN))
+                    {
+                        GXDeviceInfo = item;
+                        selectSNflag = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!selectSNflag) return false;
 
             if (GXDeviceInfo == null) return false;
 
             _StartInit();
-            SN = CamSN;
+
             return true;
         }
 
@@ -417,8 +446,8 @@ namespace BingLibrary.Vision.Cameras
                     //注册回调
 
                     m_objIGXStream.RegisterCaptureCallback(this, OnFrameCallbackFun);//  Delegate_Camera += new Action<Bitmap>(DelegateCallBack);
-                    //开始采集之前可设置buff个数
-                    //开启采集流通道
+                                                                                     //开始采集之前可设置buff个数
+                                                                                     //开启采集流通道
                     m_objIGXStream.StartGrab();
                 }
 

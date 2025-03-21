@@ -33,14 +33,15 @@ namespace BingLibrary.Vision.Cameras
 
         #region operate
 
-        public override List<string> GetListEnum()
+        public override List<CameraInfo> GetListEnum()
         {
             GC.Collect();
-            List<string> listsn = new List<string>();
+            List<CameraInfo> cameraInfos = new List<CameraInfo>();
             var m_stDeviceList = new HKCameraCtrl.MV_CC_DEVICE_INFO_LIST();
             List<HKCameraCtrl.MV_CC_DEVICE_INFO> deviceList = new List<HKCameraCtrl.MV_CC_DEVICE_INFO>();
             m_stDeviceList.nDeviceNum = 0;
             HKCameraCtrl.MV_CC_EnumDevices_NET(HKCameraCtrl.MV_GIGE_DEVICE | HKCameraCtrl.MV_USB_DEVICE, ref m_stDeviceList);
+
             for (int i = 0; i < m_stDeviceList.nDeviceNum; i++)
             {
                 HKCameraCtrl.MV_CC_DEVICE_INFO device = (HKCameraCtrl.MV_CC_DEVICE_INFO)Marshal.PtrToStructure(m_stDeviceList.pDeviceInfo[i], typeof(HKCameraCtrl.MV_CC_DEVICE_INFO));
@@ -48,50 +49,91 @@ namespace BingLibrary.Vision.Cameras
                 if (device.nTLayerType == HKCameraCtrl.MV_GIGE_DEVICE)
                 {
                     HKCameraCtrl.MV_GIGE_DEVICE_INFO gigeInfo = (HKCameraCtrl.MV_GIGE_DEVICE_INFO)HKCameraCtrl.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(HKCameraCtrl.MV_GIGE_DEVICE_INFO));
-                    listsn.Add($"{gigeInfo.chUserDefinedName};{gigeInfo.chModelName}");
+                    cameraInfos.Add(new CameraInfo()
+                    {
+                        CameraName = gigeInfo.chUserDefinedName,
+                        CameraSN = gigeInfo.chModelName,
+                        CameraBrand = CameraBrand.HaiKang,
+                        CameraType = CameraType.Gige,
+                    });
                 }
                 else if (device.nTLayerType == HKCameraCtrl.MV_USB_DEVICE)
                 {
                     HKCameraCtrl.MV_USB3_DEVICE_INFO usbInfo = (HKCameraCtrl.MV_USB3_DEVICE_INFO)HKCameraCtrl.ByteToStruct(device.SpecialInfo.stUsb3VInfo, typeof(HKCameraCtrl.MV_USB3_DEVICE_INFO));
-                    listsn.Add($"{usbInfo.chUserDefinedName};{usbInfo.chModelName}");
+
+                    cameraInfos.Add(new CameraInfo()
+                    {
+                        CameraName = usbInfo.chUserDefinedName,
+                        CameraSN = usbInfo.chModelName,
+                        CameraBrand = CameraBrand.HaiKang,
+                        CameraType = CameraType.USB,
+                    });
                 }
             }
 
-            return listsn;
+            return cameraInfos;
         }
 
-        public override bool InitDevice(string CamSN)
+        public override bool InitDevice(CameraInfo cameraInfo)
         {
-            if (string.IsNullOrEmpty(CamSN)) return false;
             HKCameraCtrl.MV_CC_DEVICE_INFO camerainfo = new HKCameraCtrl.MV_CC_DEVICE_INFO();
             var infolist = GetListInfoEnum();
             if (infolist.Count < 1) return false;
 
             bool selectSNflag = false;
-            foreach (var item in infolist)
+
+            if (!string.IsNullOrEmpty(cameraInfo.CameraName))
             {
-                if (item.nTLayerType == HKCameraCtrl.MV_GIGE_DEVICE)
+                foreach (var item in infolist)
                 {
-                    HKCameraCtrl.MV_GIGE_DEVICE_INFO gigeInfo = (HKCameraCtrl.MV_GIGE_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stGigEInfo, typeof(HKCameraCtrl.MV_GIGE_DEVICE_INFO));
-                    if (gigeInfo.chUserDefinedName.Equals(CamSN))
+                    if (item.nTLayerType == HKCameraCtrl.MV_GIGE_DEVICE && cameraInfo.CameraType == CameraType.Gige)
                     {
-                        camerainfo = item;
-                        selectSNflag = true;
-                        break;
+                        HKCameraCtrl.MV_GIGE_DEVICE_INFO gigeInfo = (HKCameraCtrl.MV_GIGE_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stGigEInfo, typeof(HKCameraCtrl.MV_GIGE_DEVICE_INFO));
+                        if (gigeInfo.chUserDefinedName.Equals(cameraInfo.CameraName))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
                     }
-                }
-                else if (item.nTLayerType == HKCameraCtrl.MV_USB_DEVICE)
-                {
-                    HKCameraCtrl.MV_USB3_DEVICE_INFO usbInfo = (HKCameraCtrl.MV_USB3_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stUsb3VInfo, typeof(HKCameraCtrl.MV_USB3_DEVICE_INFO));
-                    if (usbInfo.chUserDefinedName.Equals(CamSN))
+                    if (item.nTLayerType == HKCameraCtrl.MV_USB_DEVICE && cameraInfo.CameraType == CameraType.USB)
                     {
-                        camerainfo = item;
-                        selectSNflag = true;
-                        break;
+                        HKCameraCtrl.MV_USB3_DEVICE_INFO usbInfo = (HKCameraCtrl.MV_USB3_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stUsb3VInfo, typeof(HKCameraCtrl.MV_USB3_DEVICE_INFO));
+                        if (usbInfo.chUserDefinedName.Equals(cameraInfo.CameraName))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
                     }
                 }
             }
-
+            else if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
+            {
+                foreach (var item in infolist)
+                {
+                    if (item.nTLayerType == HKCameraCtrl.MV_GIGE_DEVICE && cameraInfo.CameraType == CameraType.Gige)
+                    {
+                        HKCameraCtrl.MV_GIGE_DEVICE_INFO gigeInfo = (HKCameraCtrl.MV_GIGE_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stGigEInfo, typeof(HKCameraCtrl.MV_GIGE_DEVICE_INFO));
+                        if (gigeInfo.chSerialNumber.Equals(cameraInfo.CameraSN))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
+                    }
+                    if (item.nTLayerType == HKCameraCtrl.MV_USB_DEVICE && cameraInfo.CameraType == CameraType.USB)
+                    {
+                        HKCameraCtrl.MV_USB3_DEVICE_INFO usbInfo = (HKCameraCtrl.MV_USB3_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stUsb3VInfo, typeof(HKCameraCtrl.MV_USB3_DEVICE_INFO));
+                        if (usbInfo.chSerialNumber.Equals(cameraInfo.CameraName))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
+                    }
+                }
+            }
             if (!selectSNflag) return false;
 
             // ch:打开设备 | en:Open device
@@ -157,7 +199,6 @@ namespace BingLibrary.Vision.Cameras
 
             //更新图像Buff大小；
             NecessaryOperBeforeGrab();
-            SN = CamSN;
 
             return true;
         }

@@ -29,7 +29,7 @@ namespace BingLibrary.Vision.Cameras
         /// </summary>
         /// <param name="brand"></param>
         /// <returns></returns>
-        public static List<string> GetDeviceEnum(CameraBrand brand)
+        public static List<CameraInfo> GetDeviceEnum(CameraBrand brand)
         {
             ICamera<T> camera = null;
             switch (brand)
@@ -87,26 +87,26 @@ namespace BingLibrary.Vision.Cameras
             return returncamera;
         }
 
-        /// <summary>
-        /// 获取对应SN的相机实例
-        /// </summary>
-        /// <param name="CamSN"></param>
-        /// <returns></returns>
-        public static ICamera<T> GetItem(string CamSN)
-        {
-            ICamera<T> cameraStandard = null;
-            if (CameraList.Count < 1) return cameraStandard;
+        ///// <summary>
+        ///// 获取对应SN的相机实例
+        ///// </summary>
+        ///// <param name="CamSN"></param>
+        ///// <returns></returns>
+        //public static ICamera<T> GetItem(string CamSN)
+        //{
+        //    ICamera<T> cameraStandard = null;
+        //    if (CameraList.Count < 1) return cameraStandard;
 
-            foreach (var item in CameraList)
-            {
-                if ((item as BaseCamera<T>).SN.Equals(CamSN))
-                {
-                    cameraStandard = item;
-                    break;
-                }
-            }
-            return cameraStandard;
-        }
+        //    foreach (var item in CameraList)
+        //    {
+        //        if ((item as BaseCamera<T>).SN.Equals(CamSN))
+        //        {
+        //            cameraStandard = item;
+        //            break;
+        //        }
+        //    }
+        //    return cameraStandard;
+        //}
 
         /// <summary>
         /// 注销相机
