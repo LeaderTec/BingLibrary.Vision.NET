@@ -668,6 +668,11 @@ namespace BingLibrary.Vision.Cameras
             m_bIsOpen = false;
         }
 
+        public override bool LoadCamConfig(string filePath)
+        {
+            return false;
+        }
+
         #endregion private
     }
 }

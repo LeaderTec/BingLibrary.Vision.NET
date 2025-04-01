@@ -17,6 +17,7 @@ using BingLibraryLite.Services;
 using System.Collections.ObjectModel;
 
 using System.Collections.Generic;
+using BingLibrary.Communication;
 
 namespace BingLibrary.Vision.NET.Test.ViewModels
 {
@@ -198,11 +199,23 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
                 }
                 else
                 {
-                    camera.StartWith_SoftTriggerModel(async x =>
+                    if (IsSoftTrigger)
                     {
-                        await bimaps.EnqueueAsync(x);
-                        _ = displayImage();
-                    });
+                        camera.StartWith_SoftTriggerModel(async x =>
+                        {
+                            await bimaps.EnqueueAsync(x);
+                            _ = displayImage();
+                        });
+                    }
+                    else
+                    {
+                        camera.StartWith_HardTriggerModel( TriggerSource.Line0,async x =>
+                        {
+                            await bimaps.EnqueueAsync(x);
+                            _ = displayImage();
+                        });
+                    }
+                    
                 }
             }
             catch { }
@@ -214,7 +227,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             try
             {
                 camera.StopGrabbing();
-
+                imageCount = 0;
                 IsEnabled1 = false;//打开相机
                 IsEnabled2 = true;//关闭相机
                 IsEnabled3 = true;//模式设置
@@ -225,7 +238,40 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             }
             catch { }
         }
+        [RelayCommand]
+        void Load()
+        {
+            string filePath = SelectFileWpf();
+            if (!String.IsNullOrEmpty(filePath))
+            {
+              bool rst=  camera.LoadCamConfig(filePath);
+                if (!rst)
+                    HandyControl.Controls.MessageBox.Show("配置文件加载失败！");
 
+            }
+
+        }
+
+         string SelectFileWpf()
+        {
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = "相机配置文件 (.mfs)|*.mfs|All files (*.*)|*.*"
+            };
+            var result = openFileDialog.ShowDialog();
+            if (result == true)
+            {
+                return openFileDialog.FileName;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        [ObservableProperty] int _pinTuCount = 1;
+        int imageCount = 0;
+        HImage tileImages = new HImage();
         private async Task displayImage()
         {
             await semaphoreSlim.WaitAsync();
@@ -233,7 +279,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             {
                 bool rst = camera.TryGetNextTriggerData(out MyTriggerData myTriggerData);
                 if (rst)
-                    Status = $"耗时:{sw.ElapsedMilliseconds}ms \r\nID：{myTriggerData.Id}\r\nName：{myTriggerData.Name}";
+                    Status = $"耗时:{sw.ElapsedMilliseconds}ms \r\nID：{myTriggerData.Id}\r\nName：{myTriggerData.Name}\r\n拼图计数：{imageCount+1}";
                 else
                     Status = $"耗时:{sw.ElapsedMilliseconds}ms";
                 Bitmap bitmap = await bimaps.DequeueAsync();
@@ -241,30 +287,60 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
                 {
                     HImage image = TransToHimage.ConvertBitmapToHImage(bitmap);
                     bitmap?.Dispose();
-                    ImageWindowData.DisplayImage(image);
+                    ImageWindowData.DisplayImage(new HImage(image));
                     ImageWindowData.RefreshWindow();
+                    if(imageCount==0)
+                        ImageWindowData.FitImage();
+
+                    if (PinTuCount > 1)
+                    {
+                        imageCount = imageCount + 1;
+                        if (!tileImages.IsInitialized())
+                        {
+                            tileImages = new HImage(image);
+                            System.Diagnostics.Debug.WriteLine("贴图清空" );
+                        }
+                         
+                        else
+                            tileImages= tileImages.ConcatObj(image);
+                        System.Diagnostics.Debug.WriteLine("线扫计数"+ imageCount);
+                        if (imageCount == PinTuCount)
+                        {
+                            System.Diagnostics.Debug.WriteLine("开始拼图" + imageCount);
+                            HImage finalImage=  tileImages.TileImages(1, "vertical");
+                            ImageWindowData.DisplayImage(new HImage(finalImage));
+                            ImageWindowData.FitImage();
+                          //  ImageWindowData.RefreshWindow();
+                            imageCount = 0;
+                            tileImages?.Dispose();
+                            tileImages = new HImage();
+                        }
+                    }
+                    
+
+
                 });
             }
 
             semaphoreSlim.Release();
         }
 
+
+
+
         private int myTriggerDataIndex = 0;
 
         [ObservableProperty] private string _triggerVar = "Hello World";
 
         [RelayCommand]
-        private async void SoftTrigger()
+        private  void SoftTrigger()
         {
             try
             {
-                for (int i = 1; i < 30; i++)
-                {
-                    await Task.Delay(300);
-                    MyTriggerData myTriggerData = new() { Id = myTriggerDataIndex++, Name = TriggerVar };
+                    MyTriggerData myTriggerData = new() { Id = 0, Name = TriggerVar };
 
                     camera.SoftTrigger(myTriggerData);
-                }
+              
             }
             catch { }
         }

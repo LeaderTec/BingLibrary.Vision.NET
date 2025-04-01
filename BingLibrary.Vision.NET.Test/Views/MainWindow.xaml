@@ -45,7 +45,13 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </hc:ComboBox>
-
+                <Button   DockPanel.Dock="Top" Margin="15"  
+                            Width="200"
+                            Height="36"
+                            Command="{Binding LoadCommand}"
+                            Content="加载相机配置文件"
+                            IsEnabled="{Binding IsEnabled2}"
+                            Style="{StaticResource ButtonDashed}" />
                 <Grid DockPanel.Dock="Top">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -131,7 +137,7 @@
                             Margin="15,25,15,15"
                             Content="软触发"
                             IsChecked="{Binding IsSoftTrigger}"
-                            IsEnabled="False" />
+                            IsEnabled="True" />
                     </Grid>
                     <Grid Grid.Column="1">
                         <Button
@@ -143,6 +149,12 @@
                             Style="{StaticResource ButtonDashed}" />
                     </Grid>
                 </Grid>
+             
+                <hc:TextBox
+                    Margin="5"
+                    hc:TitleElement.Title="拼图Count" hc:TitleElement.TitlePlacement="Left"
+                    hc:TitleElement.TitleWidth="80"
+                    DockPanel.Dock="Top" Text="{Binding PinTuCount, UpdateSourceTrigger=PropertyChanged}" />
                 <hc:TextBox
                     Margin="5"
                     hc:TitleElement.Title="触发字段" hc:TitleElement.TitlePlacement="Left"

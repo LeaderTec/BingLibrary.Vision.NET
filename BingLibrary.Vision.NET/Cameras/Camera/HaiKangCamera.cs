@@ -725,6 +725,18 @@ namespace BingLibrary.Vision.Cameras
             ActionGetImage?.Invoke(bitMap.Clone() as Bitmap);
         }
 
+        public override bool LoadCamConfig(string filePath)
+        {
+            try {
+             int nRet=   _myCamera.MV_CC_FeatureLoad_NET(filePath);
+
+                if (HKCameraCtrl.MV_OK == nRet)
+                    return true;
+                else
+                    return false;
+            } catch { return false; }
+        }
+
         #endregion helper
     }
 }

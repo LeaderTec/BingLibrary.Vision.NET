@@ -31,36 +31,41 @@ namespace BingLibrary.Vision.Cameras
         /// <exception cref="ArgumentException">当参数不满足要求时抛出</exception>
         public static HImage ConvertBitmapToHImage(Bitmap sourceImage)
         {
-            // 参数验证
-            if (sourceImage == null)
-                throw new ArgumentNullException(nameof(sourceImage));
-
-            if (sourceImage.Width == 0 || sourceImage.Height == 0)
-                throw new ArgumentException("Invalid image dimensions", nameof(sourceImage));
-
-            return CreateHImageFromBitmap(sourceImage, sourceImage.PixelFormat);
-
-            // 创建兼容格式的临时位图
-            using (var convertedBitmap = new Bitmap(
-                sourceImage.Width,
-                sourceImage.Height,
-                sourceImage.PixelFormat))
+            try
             {
-                // 设置8位灰度调色板
-                if (sourceImage.PixelFormat == PixelFormat.Format8bppIndexed)
-                    SetGrayscalePalette(convertedBitmap);
+                // 参数验证
+                if (sourceImage == null)
+                    throw new ArgumentNullException(nameof(sourceImage));
 
-                // 高质量图像转换
-                using (var g = Graphics.FromImage(convertedBitmap))
+                if (sourceImage.Width == 0 || sourceImage.Height == 0)
+                    throw new ArgumentException("Invalid image dimensions", nameof(sourceImage));
+
+                return CreateHImageFromBitmap(sourceImage, sourceImage.PixelFormat);
+
+                // 创建兼容格式的临时位图
+                using (var convertedBitmap = new Bitmap(
+                    sourceImage.Width,
+                    sourceImage.Height,
+                    sourceImage.PixelFormat))
                 {
-                    g.CompositingQuality = CompositingQuality.HighQuality;
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.SmoothingMode = SmoothingMode.HighQuality;
-                    g.DrawImage(sourceImage, new Rectangle(0, 0, convertedBitmap.Width, convertedBitmap.Height));
-                }
+                    // 设置8位灰度调色板
+                    if (sourceImage.PixelFormat == PixelFormat.Format8bppIndexed)
+                        SetGrayscalePalette(convertedBitmap);
 
-                return CreateHImageFromBitmap(convertedBitmap, convertedBitmap.PixelFormat);
+                    // 高质量图像转换
+                    using (var g = Graphics.FromImage(convertedBitmap))
+                    {
+                        g.CompositingQuality = CompositingQuality.HighQuality;
+                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                        g.SmoothingMode = SmoothingMode.HighQuality;
+                        g.DrawImage(sourceImage, new Rectangle(0, 0, convertedBitmap.Width, convertedBitmap.Height));
+                    }
+
+                    return CreateHImageFromBitmap(convertedBitmap, convertedBitmap.PixelFormat);
+
+                }
             }
+            catch { return new HImage(); }
         }
 
         /// <summary>

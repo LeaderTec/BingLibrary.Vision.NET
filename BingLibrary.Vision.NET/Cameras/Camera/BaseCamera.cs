@@ -62,8 +62,17 @@ namespace BingLibrary.Vision.Cameras
 
         public abstract bool InitDevice(CameraInfo cameraInfo);
 
+        List<Action<Bitmap>> handles = new List<Action<Bitmap>>();
         public bool StartWith_Continue(Action<Bitmap> callbackfunc)
         {
+            try {
+                foreach (Action<Bitmap> handle in ActionGetImage.GetInvocationList())
+                    foreach(var tempHandle in handles)
+                        if(tempHandle==handle)
+                            ActionGetImage -= handle;
+                handles.Clear();
+                handles.Add(callbackfunc);
+            } catch { }
             SetTriggerMode(TriggerMode.Off);
             if (callbackfunc != null && !ActionGetImage.GetInvocationList().Contains(callbackfunc)) ActionGetImage += callbackfunc;
             return StartGrabbing();
@@ -71,14 +80,34 @@ namespace BingLibrary.Vision.Cameras
 
         public bool StartWith_HardTriggerModel(TriggerSource hardsource, Action<Bitmap> callbackfunc = null)
         {
-            if (hardsource == TriggerSource.Software) hardsource = TriggerSource.Line0;
-            SetTriggerMode(TriggerMode.On, hardsource);
+            try
+            {
+                foreach (Action<Bitmap> handle in ActionGetImage.GetInvocationList())
+                    foreach (var tempHandle in handles)
+                        if (tempHandle == handle)
+                            ActionGetImage -= handle;
+                handles.Clear();
+                handles.Add(callbackfunc);
+            }
+            catch { }
+            //if (hardsource == TriggerSource.Software) hardsource = TriggerSource.Line0;
+            //SetTriggerMode(TriggerMode.On, hardsource);
             if (callbackfunc != null && !ActionGetImage.GetInvocationList().Contains(callbackfunc)) ActionGetImage += callbackfunc;
             return StartGrabbing();
         }
 
         public bool StartWith_SoftTriggerModel(Action<Bitmap> callbackfunc = null)
         {
+            try
+            {
+                foreach (Action<Bitmap> handle in ActionGetImage.GetInvocationList())
+                    foreach (var tempHandle in handles)
+                        if (tempHandle == handle)
+                            ActionGetImage -= handle;
+                handles.Clear();
+                handles.Add(callbackfunc);
+            }
+            catch { }
             SetTriggerMode(TriggerMode.On, TriggerSource.Software);
 
             if (callbackfunc != null && !ActionGetImage.GetInvocationList().Contains(callbackfunc)) ActionGetImage += callbackfunc;
@@ -135,7 +164,7 @@ namespace BingLibrary.Vision.Cameras
         #endregion operate
 
         #region SettingConfig
-
+        public abstract bool LoadCamConfig(string filePath); 
         public void SetCamConfig(CameraData config)
         {
             if (config == null) return;

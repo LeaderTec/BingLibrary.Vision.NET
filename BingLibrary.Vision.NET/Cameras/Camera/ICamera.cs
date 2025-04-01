@@ -77,6 +77,11 @@ namespace BingLibrary.Vision.Cameras
         #region SettingConfig
 
         /// <summary>
+        /// 加载相机配置文件
+        /// </summary>
+        /// <param name="filePath"></param>
+        bool LoadCamConfig(string filePath);
+        /// <summary>
         /// 设置相机参数
         /// </summary>
         /// <param name="config"></param>

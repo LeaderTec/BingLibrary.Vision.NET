@@ -497,6 +497,11 @@ namespace BingLibrary.Vision.Cameras
             }
         }
 
+        public override bool LoadCamConfig(string filePath)
+        {
+            return false;
+        }
+
         #endregion private
     }
 }

@@ -490,6 +490,11 @@ namespace BingLibrary.Vision.Cameras.Camera
             ActionGetImage?.Invoke(bitMap.Clone() as Bitmap);
         }
 
+        public override bool LoadCamConfig(string filePath)
+        {
+            return false;
+        }
+
         #endregion helper
     }
 }
