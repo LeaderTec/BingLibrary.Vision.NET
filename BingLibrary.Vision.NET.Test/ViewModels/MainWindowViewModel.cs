@@ -239,16 +239,17 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             catch { }
         }
 
-        private WorkerEngine we = new WorkerEngine();
-
         [RelayCommand]
         private void Load()
         {
+            WorkerEngine we = new WorkerEngine();
+            we.EnableJIT();
             we.ReloadProcedure("AddTest", "D:\\Test\\HalScripts");
             we.SetParam("AddTest", "value1", 3);
             we.SetParam("AddTest", "value2", 5);
             we.ExecuteProcedure("AddTest");
             var rst1 = we.GetParam<HTuple>("AddTest", "result");
+            we.Dispose();
             return;
             string filePath = SelectFileWpf();
             if (!String.IsNullOrEmpty(filePath))

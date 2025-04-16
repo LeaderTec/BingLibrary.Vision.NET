@@ -36,6 +36,20 @@ namespace BingLibrary.Vision.Engine
         private bool _disposed;
 
         /// <summary>
+        /// 启用 JIT 编译
+        /// </summary>
+        /// <returns></returns>
+        public bool EnableJIT()
+        {
+            try
+            {
+                HalEngine.Engine.SetEngineAttribute("execute_procedures_jit_compiled", "true");
+                return true;
+            }
+            catch { return false; }
+        }
+
+        /// <summary>
         /// 获取所有过程名称
         /// </summary>
         public IReadOnlyCollection<string> ProcedureNames => _devProcedureCalls.Keys;
