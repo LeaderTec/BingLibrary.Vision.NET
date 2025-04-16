@@ -1,4 +1,5 @@
 ﻿using HalconDotNet;
+using System;
 
 /*************************************************************************************
  *
@@ -22,47 +23,50 @@ namespace BingLibrary.Vision.Engine
     /// </summary>
     public static class HalEngine
     {
-        public static HDevEngine myEngine = new HDevEngine();
+        private static readonly Lazy<HDevEngine> _engine = new Lazy<HDevEngine>(() => new HDevEngine());
+        public static HDevEngine Engine => _engine.Value;
     }
 
     /// <summary>
     /// 脱离 program，直接调用 procedure，推荐使用。
     /// </summary>
-    public class WorkerEngine
+    public sealed class WorkerEngine : IDisposable
     {
-        private Dictionary<string, HDevProcedureCall> devProcedureCalls = new Dictionary<string, HDevProcedureCall>();
-        private List<string> procedureNames = new List<string>();
+        private readonly Dictionary<string, HDevProcedureCall> _devProcedureCalls = new Dictionary<string, HDevProcedureCall>(StringComparer.OrdinalIgnoreCase);
+        private bool _disposed;
 
-        public List<string> GetProcedureNames()
-        {
-            return procedureNames;
-        }
+        /// <summary>
+        /// 获取所有过程名称
+        /// </summary>
+        public IReadOnlyCollection<string> ProcedureNames => _devProcedureCalls.Keys;
 
         /// <summary>
         /// 移除所有脚本
         /// </summary>
-        /// <param name="name"></param>
-        public void RemoveProcedures()
+        public void RemoveAllProcedures()
         {
-            foreach (string name in procedureNames)
-                devProcedureCalls[name].Dispose();
-            procedureNames.Clear();
-            devProcedureCalls.Clear();
+            foreach (var procedureCall in _devProcedureCalls.Values)
+            {
+                procedureCall.Dispose();
+            }
+            _devProcedureCalls.Clear();
         }
 
         /// <summary>
         /// 移除指定脚本
         /// </summary>
-        /// <param name="name"></param>
-        public void RemoveProcedure(string name)
+        /// <param name="name">脚本名称</param>
+        public bool RemoveProcedure(string name)
         {
-            try
+            if (string.IsNullOrWhiteSpace(name))
+                return false;
+
+            if (_devProcedureCalls.TryGetValue(name, out var procedureCall))
             {
-                procedureNames.Remove(name);
-                devProcedureCalls[name].Dispose();
-                devProcedureCalls.Remove(name);
+                procedureCall.Dispose();
+                return _devProcedureCalls.Remove(name);
             }
-            catch { }
+            return false;
         }
 
         /// <summary>
@@ -70,100 +74,143 @@ namespace BingLibrary.Vision.Engine
         /// </summary>
         /// <param name="name">脚本名字，不包含后缀</param>
         /// <param name="path">脚本所在路径</param>
-        /// <returns></returns>
+        /// <returns>是否添加成功</returns>
         public bool AddProcedure(string name, string path)
         {
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
+                return false;
+
+            if (_devProcedureCalls.ContainsKey(name))
+                return false;
+
             try
             {
-                if (procedureNames.Contains(name)) return false;
-                else procedureNames.Add(name);
-
-                HalEngine.myEngine.SetProcedurePath(path);
-                devProcedureCalls.Add(name, new HDevProcedureCall(new HDevProcedure(name)));
-                HalEngine.myEngine.UnloadProcedure(name);
+                HalEngine.Engine.SetProcedurePath(path);
+                var procedure = new HDevProcedure(name);
+                _devProcedureCalls.Add(name, new HDevProcedureCall(procedure));
+                HalEngine.Engine.UnloadProcedure(name);
                 return true;
             }
-            catch { return false; }
+            catch (Exception ex)
+            {
+                // 记录日志
+                System.Diagnostics.Debug.WriteLine($"Failed to add procedure {name}: {ex.Message}");
+                return false;
+            }
         }
 
         /// <summary>
-        /// 获取 procedur 参数信息
+        /// 重新加载过程
         /// </summary>
-        /// <param name="procedureName"></param>
+        /// <param name="name"></param>
+        /// <param name="path"></param>
         /// <returns></returns>
+        public bool ReloadProcedure(string name, string path)
+        {
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
+                return false;
+
+            if (_devProcedureCalls.TryGetValue(name, out var procedureCall))
+            {
+                procedureCall.Dispose();
+                _devProcedureCalls.Remove(name);
+            }
+
+            return AddProcedure(name, path);
+        }
+
+        /// <summary>
+        /// 获取过程参数信息
+        /// </summary>
+        /// <param name="procedureName">过程名称</param>
+        /// <returns>过程信息</returns>
         public ProcedureInfo GetProcedureInfo(string procedureName)
         {
+            if (string.IsNullOrWhiteSpace(procedureName) || !_devProcedureCalls.TryGetValue(procedureName, out var procedureCall))
+                return new ProcedureInfo();
+
             try
             {
-                ProcedureInfo procedureInfo = new ProcedureInfo();
-                procedureInfo.InputCtrlParamCount = devProcedureCalls[procedureName].GetProcedure().GetInputCtrlParamCount();
-                procedureInfo.IntputIconicParamCount = devProcedureCalls[procedureName].GetProcedure().GetInputIconicParamCount();
-
-                procedureInfo.OutputCtrlParamCount = devProcedureCalls[procedureName].GetProcedure().GetOutputCtrlParamCount();
-                procedureInfo.OutputIconicParamCount = devProcedureCalls[procedureName].GetProcedure().GetOutputIconicParamCount();
-
-                for (int i = 1; i <= procedureInfo.InputCtrlParamCount; i++)
+                var procedure = procedureCall.GetProcedure();
+                var info = new ProcedureInfo
                 {
-                    procedureInfo.InputCtrlParamNames.Add(devProcedureCalls[procedureName].GetProcedure().GetInputCtrlParamName(i));
+                    InputCtrlParamCount = procedure.GetInputCtrlParamCount(),
+                    IntputIconicParamCount = procedure.GetInputIconicParamCount(),
+                    OutputCtrlParamCount = procedure.GetOutputCtrlParamCount(),
+                    OutputIconicParamCount = procedure.GetOutputIconicParamCount()
+                };
+
+                for (int i = 1; i <= info.InputCtrlParamCount; i++)
+                {
+                    info.InputCtrlParamNames.Add(procedure.GetInputCtrlParamName(i));
                 }
 
-                for (int i = 1; i <= procedureInfo.IntputIconicParamCount; i++)
+                for (int i = 1; i <= info.IntputIconicParamCount; i++)
                 {
-                    procedureInfo.InputIconicParamNames.Add(devProcedureCalls[procedureName].GetProcedure().GetInputIconicParamName(i));
+                    info.InputIconicParamNames.Add(procedure.GetInputIconicParamName(i));
                 }
 
-                for (int i = 1; i <= procedureInfo.OutputCtrlParamCount; i++)
+                for (int i = 1; i <= info.OutputCtrlParamCount; i++)
                 {
-                    procedureInfo.OutputCtrlParamNames.Add(devProcedureCalls[procedureName].GetProcedure().GetOutputCtrlParamName(i));
+                    info.OutputCtrlParamNames.Add(procedure.GetOutputCtrlParamName(i));
                 }
 
-                for (int i = 1; i <= procedureInfo.OutputIconicParamCount; i++)
+                for (int i = 1; i <= info.OutputIconicParamCount; i++)
                 {
-                    procedureInfo.OutputIconicParamNames.Add(devProcedureCalls[procedureName].GetProcedure().GetOutputIconicParamName(i));
+                    info.OutputIconicParamNames.Add(procedure.GetOutputIconicParamName(i));
                 }
 
-                return procedureInfo;
+                return info;
             }
-            catch { return new ProcedureInfo(); }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to get procedure info for {procedureName}: {ex.Message}");
+                return new ProcedureInfo();
+            }
         }
 
         /// <summary>
         /// 设置参数
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="procedureName"></param>
-        /// <param name="paramName"></param>
-        /// <param name="paramValue"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">参数类型</typeparam>
+        /// <param name="procedureName">过程名称</param>
+        /// <param name="paramName">参数名称</param>
+        /// <param name="paramValue">参数值</param>
+        /// <returns>是否设置成功</returns>
         public bool SetParam<T>(string procedureName, string paramName, T paramValue)
         {
+            if (string.IsNullOrWhiteSpace(procedureName) || string.IsNullOrWhiteSpace(paramName))
+                return false;
+
+            if (!_devProcedureCalls.TryGetValue(procedureName, out var procedureCall))
+                return false;
+
             try
             {
-                if (devProcedureCalls.TryGetValue(procedureName, out var procedureCall))
+                switch (paramValue)
                 {
-                    switch (paramValue)
-                    {
-                        case HImage hImage:
-                        case HRegion hRegion:
-                            procedureCall.SetInputIconicParamObject(paramName, paramValue as HObject);
-                            break;
+                    case HImage image:
+                    case HRegion region:
+                        procedureCall.SetInputIconicParamObject(paramName, paramValue as HObject);
+                        break;
 
-                        case HTuple hTuple:
-                            procedureCall.SetInputCtrlParamTuple(paramName, paramValue as HTuple);
-                            break;
+                    case HTuple tuple:
+                        procedureCall.SetInputCtrlParamTuple(paramName, tuple);
+                        break;
 
-                        case HDict hDict:
-                            procedureCall.SetInputCtrlParamTuple(paramName, paramValue as HDict);
-                            break;
-                    }
+                    case HDict dict:
+                        procedureCall.SetInputCtrlParamTuple(paramName, dict);
+                        break;
+
+                    default:
+                        procedureCall.SetInputCtrlParamTuple(paramName, new HTuple(paramValue));
+                        return true;
                 }
-
                 return true;
             }
             catch (Exception ex)
             {
-                // 处理异常，例如记录日志或显示错误信息
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to set parameter {paramName} for procedure {procedureName}: {ex.Message}");
                 return false;
             }
         }
@@ -171,73 +218,108 @@ namespace BingLibrary.Vision.Engine
         /// <summary>
         /// 获取参数
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="procedureName"></param>
-        /// <param name="paramName"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">参数类型</typeparam>
+        /// <param name="procedureName">过程名称</param>
+        /// <param name="paramName">参数名称</param>
+        /// <returns>参数值</returns>
         public T GetParam<T>(string procedureName, string paramName) where T : class
         {
+            if (string.IsNullOrWhiteSpace(procedureName) || string.IsNullOrWhiteSpace(paramName))
+                return default;
+
+            if (!_devProcedureCalls.TryGetValue(procedureName, out var procedureCall))
+                return default;
+
             try
             {
-                if (devProcedureCalls.TryGetValue(procedureName, out var procedureCall))
+                if (typeof(T) == typeof(HImage) || typeof(T) == typeof(HRegion))
                 {
-                    if (typeof(T) == typeof(HImage) || typeof(T) == typeof(HRegion))
-                    {
-                        return procedureCall.GetOutputIconicParamImage(paramName) as T;
-                    }
-                    else if (typeof(T) == typeof(HTuple))
-                    {
-                        return procedureCall.GetOutputCtrlParamTuple(paramName) as T;
-                    }
-                    else if (typeof(T) == typeof(HDict))
-                    {
-                        HTuple rst = procedureCall.GetOutputCtrlParamTuple(paramName);
-                        HDict dict = new HDict(rst.H);
-                        return dict as T;
-                    }
+                    return procedureCall.GetOutputIconicParamImage(paramName) as T;
                 }
-
-                return default(T);
+                else if (typeof(T) == typeof(HTuple))
+                {
+                    return procedureCall.GetOutputCtrlParamTuple(paramName) as T;
+                }
+                else if (typeof(T) == typeof(HDict))
+                {
+                    var result = procedureCall.GetOutputCtrlParamTuple(paramName);
+                    return new HDict(result.H) as T;
+                }
+                return default;
             }
             catch (Exception ex)
             {
-                // 处理异常，例如记录日志或显示错误信息
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                return default(T);
+                System.Diagnostics.Debug.WriteLine($"Failed to get parameter {paramName} from procedure {procedureName}: {ex.Message}");
+                return default;
             }
         }
 
         /// <summary>
-        /// 运行
+        /// 执行过程
         /// </summary>
-        /// <param name="procedureName"></param>
-        /// <returns></returns>
-        public bool InspectProcedure(string procedureName)
+        /// <param name="procedureName">过程名称</param>
+        /// <returns>是否执行成功</returns>
+        public bool ExecuteProcedure(string procedureName)
         {
+            if (string.IsNullOrWhiteSpace(procedureName))
+                return false;
+
+            if (!_devProcedureCalls.TryGetValue(procedureName, out var procedureCall))
+                return false;
+
             try
             {
-                if (devProcedureCalls.Keys.Contains(procedureName))
-                {
-                    devProcedureCalls[procedureName].Execute();
-                    return true;
-                }
-                else
-                    return false;
+                procedureCall.Execute();
+                return true;
             }
-            catch { return false; }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to execute procedure {procedureName}: {ex.Message}");
+                return false;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    RemoveAllProcedures();
+                }
+                _disposed = true;
+            }
+        }
+
+        ~WorkerEngine()
+        {
+            Dispose(false);
         }
     }
 
-    public class ProcedureInfo
+    public sealed class ProcedureInfo
     {
-        public int InputCtrlParamCount { set; get; }
-        public int IntputIconicParamCount { set; get; }
-        public int OutputCtrlParamCount { set; get; }
-        public int OutputIconicParamCount { set; get; }
+        public int InputCtrlParamCount { get; set; }
+        public int IntputIconicParamCount { get; set; }
+        public int OutputCtrlParamCount { get; set; }
+        public int OutputIconicParamCount { get; set; }
 
-        public List<string> InputCtrlParamNames { set; get; } = new List<string>();
-        public List<string> InputIconicParamNames { set; get; } = new List<string>();
-        public List<string> OutputCtrlParamNames { set; get; } = new List<string>();
-        public List<string> OutputIconicParamNames { set; get; } = new List<string>();
+        public List<string> InputCtrlParamNames { get; } = new List<string>();
+        public List<string> InputIconicParamNames { get; } = new List<string>();
+        public List<string> OutputCtrlParamNames { get; } = new List<string>();
+        public List<string> OutputIconicParamNames { get; } = new List<string>();
+
+        // 添加只读视图属性
+        public IReadOnlyList<string> InputCtrlParamNamesView => InputCtrlParamNames;
+
+        public IReadOnlyList<string> InputIconicParamNamesView => InputIconicParamNames;
+        public IReadOnlyList<string> OutputCtrlParamNamesView => OutputCtrlParamNames;
+        public IReadOnlyList<string> OutputIconicParamNamesView => OutputIconicParamNames;
     }
 }

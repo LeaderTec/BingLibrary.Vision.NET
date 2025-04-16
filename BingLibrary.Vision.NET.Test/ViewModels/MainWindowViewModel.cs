@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 
 using System.Collections.Generic;
 using BingLibrary.Communication;
+using BingLibrary.Vision.Engine;
 
 namespace BingLibrary.Vision.NET.Test.ViewModels
 {
@@ -43,7 +44,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         public MainWindowViewModel(IRegionManager regionManager, BingLibraryLite.Services.ILoggerService loggerService)
         {
             IsEnabled1 = true;//打开相机
-            IsEnabled2 = false;//关闭相机
+            IsEnabled2 = true;//关闭相机
             IsEnabled3 = false;//模式设置
             IsEnabled4 = false;//开始拍照
             IsEnabled5 = false;//停止拍照
@@ -209,13 +210,12 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
                     }
                     else
                     {
-                        camera.StartWith_HardTriggerModel( TriggerSource.Line0,async x =>
+                        camera.StartWith_HardTriggerModel(TriggerSource.Line0, async x =>
                         {
                             await bimaps.EnqueueAsync(x);
                             _ = displayImage();
                         });
                     }
-                    
                 }
             }
             catch { }
@@ -238,21 +238,28 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             }
             catch { }
         }
+
+        private WorkerEngine we = new WorkerEngine();
+
         [RelayCommand]
-        void Load()
+        private void Load()
         {
+            we.ReloadProcedure("AddTest", "D:\\Test\\HalScripts");
+            we.SetParam("AddTest", "value1", 3);
+            we.SetParam("AddTest", "value2", 5);
+            we.ExecuteProcedure("AddTest");
+            var rst1 = we.GetParam<HTuple>("AddTest", "result");
+            return;
             string filePath = SelectFileWpf();
             if (!String.IsNullOrEmpty(filePath))
             {
-              bool rst=  camera.LoadCamConfig(filePath);
+                bool rst = camera.LoadCamConfig(filePath);
                 if (!rst)
                     HandyControl.Controls.MessageBox.Show("配置文件加载失败！");
-
             }
-
         }
 
-         string SelectFileWpf()
+        private string SelectFileWpf()
         {
             var openFileDialog = new Microsoft.Win32.OpenFileDialog()
             {
@@ -269,9 +276,10 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             }
         }
 
-        [ObservableProperty] int _pinTuCount = 1;
-        int imageCount = 0;
-        HImage tileImages = new HImage();
+        [ObservableProperty] private int _pinTuCount = 1;
+        private int imageCount = 0;
+        private HImage tileImages = new HImage();
+
         private async Task displayImage()
         {
             await semaphoreSlim.WaitAsync();
@@ -279,7 +287,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             {
                 bool rst = camera.TryGetNextTriggerData(out MyTriggerData myTriggerData);
                 if (rst)
-                    Status = $"耗时:{sw.ElapsedMilliseconds}ms \r\nID：{myTriggerData.Id}\r\nName：{myTriggerData.Name}\r\n拼图计数：{imageCount+1}";
+                    Status = $"耗时:{sw.ElapsedMilliseconds}ms \r\nID：{myTriggerData.Id}\r\nName：{myTriggerData.Name}\r\n拼图计数：{imageCount + 1}";
                 else
                     Status = $"耗时:{sw.ElapsedMilliseconds}ms";
                 Bitmap bitmap = await bimaps.DequeueAsync();
@@ -289,7 +297,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
                     bitmap?.Dispose();
                     ImageWindowData.DisplayImage(new HImage(image));
                     ImageWindowData.RefreshWindow();
-                    if(imageCount==0)
+                    if (imageCount == 0)
                         ImageWindowData.FitImage();
 
                     if (PinTuCount > 1)
@@ -298,49 +306,41 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
                         if (!tileImages.IsInitialized())
                         {
                             tileImages = new HImage(image);
-                            System.Diagnostics.Debug.WriteLine("贴图清空" );
+                            System.Diagnostics.Debug.WriteLine("贴图清空");
                         }
-                         
                         else
-                            tileImages= tileImages.ConcatObj(image);
-                        System.Diagnostics.Debug.WriteLine("线扫计数"+ imageCount);
+                            tileImages = tileImages.ConcatObj(image);
+                        System.Diagnostics.Debug.WriteLine("线扫计数" + imageCount);
                         if (imageCount == PinTuCount)
                         {
                             System.Diagnostics.Debug.WriteLine("开始拼图" + imageCount);
-                            HImage finalImage=  tileImages.TileImages(1, "vertical");
+                            HImage finalImage = tileImages.TileImages(1, "vertical");
                             ImageWindowData.DisplayImage(new HImage(finalImage));
                             ImageWindowData.FitImage();
-                          //  ImageWindowData.RefreshWindow();
+                            //  ImageWindowData.RefreshWindow();
                             imageCount = 0;
                             tileImages?.Dispose();
                             tileImages = new HImage();
                         }
                     }
-                    
-
-
                 });
             }
 
             semaphoreSlim.Release();
         }
 
-
-
-
         private int myTriggerDataIndex = 0;
 
         [ObservableProperty] private string _triggerVar = "Hello World";
 
         [RelayCommand]
-        private  void SoftTrigger()
+        private void SoftTrigger()
         {
             try
             {
-                    MyTriggerData myTriggerData = new() { Id = 0, Name = TriggerVar };
+                MyTriggerData myTriggerData = new() { Id = 0, Name = TriggerVar };
 
-                    camera.SoftTrigger(myTriggerData);
-              
+                camera.SoftTrigger(myTriggerData);
             }
             catch { }
         }
