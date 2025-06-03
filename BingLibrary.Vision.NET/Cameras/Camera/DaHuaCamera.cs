@@ -82,6 +82,7 @@ namespace BingLibrary.Vision.Cameras.Camera
 
         public override bool InitDevice(CameraInfo cameraInfo)
         {
+            Info = cameraInfo;
             IMVDefine.IMV_DeviceList deviceList = new IMVDefine.IMV_DeviceList();
             IMVDefine.IMV_EInterfaceType interfaceTp = IMVDefine.IMV_EInterfaceType.interfaceTypeAll;
             int res = MyCamera.IMV_EnumDevices(ref deviceList, (uint)interfaceTp);

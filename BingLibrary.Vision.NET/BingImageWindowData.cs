@@ -114,6 +114,22 @@ namespace BingLibrary.Vision
         }
 
         /// <summary>
+        /// 绘制矩形
+        /// </summary>
+        /// <param name="color"></param>
+        /// <param name="row1"></param>
+        /// <param name="column1"></param>
+        /// <param name="row2"></param>
+        /// <param name="column2"></param>
+        public void DrawRectangleMod1(HalconColors color, double r1, double c1, double r2, double c2, out double row1, out double column1, out double row2, out double column2)
+        {
+            this.WindowCtrl.IsDrawing = true;
+            this.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(color.ToDescriptionOrString());
+            this.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1Mod(r1, c1, r2, c2, out row1, out column1, out row2, out column2);
+            this.WindowCtrl.IsDrawing = false;
+        }
+
+        /// <summary>
         /// 绘制可旋转矩形
         /// </summary>
         /// <param name="color"></param>

@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace BingLibrary.Vision.Cameras
 {
-    internal abstract class BaseCamera<T> : ICamera<T>
+    public abstract class BaseCamera<T> : ICamera<T>
     {
         protected BaseCamera()
         { ActionGetImage += ResetActionImageSignal; }
@@ -43,6 +43,7 @@ namespace BingLibrary.Vision.Cameras
         #region Parm
 
         public string SN { get; set; } = string.Empty;
+        public CameraInfo Info { get; set; } = new CameraInfo();
 
         /// <summary>
         /// 回调委托，获取图像数据，+= 赋值,子类要添加到回调中
@@ -65,14 +66,16 @@ namespace BingLibrary.Vision.Cameras
         List<Action<Bitmap>> handles = new List<Action<Bitmap>>();
         public bool StartWith_Continue(Action<Bitmap> callbackfunc)
         {
-            try {
+            try
+            {
                 foreach (Action<Bitmap> handle in ActionGetImage.GetInvocationList())
-                    foreach(var tempHandle in handles)
-                        if(tempHandle==handle)
+                    foreach (var tempHandle in handles)
+                        if (tempHandle == handle)
                             ActionGetImage -= handle;
                 handles.Clear();
                 handles.Add(callbackfunc);
-            } catch { }
+            }
+            catch { }
             SetTriggerMode(TriggerMode.Off);
             if (callbackfunc != null && !ActionGetImage.GetInvocationList().Contains(callbackfunc)) ActionGetImage += callbackfunc;
             return StartGrabbing();
@@ -90,8 +93,8 @@ namespace BingLibrary.Vision.Cameras
                 handles.Add(callbackfunc);
             }
             catch { }
-            //if (hardsource == TriggerSource.Software) hardsource = TriggerSource.Line0;
-            //SetTriggerMode(TriggerMode.On, hardsource);
+            // if (hardsource == TriggerSource.Software) hardsource = TriggerSource.Line0;
+            SetTriggerMode(TriggerMode.On, hardsource);
             if (callbackfunc != null && !ActionGetImage.GetInvocationList().Contains(callbackfunc)) ActionGetImage += callbackfunc;
             return StartGrabbing();
         }
@@ -164,7 +167,7 @@ namespace BingLibrary.Vision.Cameras
         #endregion operate
 
         #region SettingConfig
-        public abstract bool LoadCamConfig(string filePath); 
+        public abstract bool LoadCamConfig(string filePath);
         public void SetCamConfig(CameraData config)
         {
             if (config == null) return;

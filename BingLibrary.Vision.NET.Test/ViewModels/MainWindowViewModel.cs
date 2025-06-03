@@ -19,6 +19,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using BingLibrary.Communication;
 using BingLibrary.Vision.Engine;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace BingLibrary.Vision.NET.Test.ViewModels
 {
@@ -84,10 +85,10 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         [RelayCommand]
         private void GetCameraNames()
         {
-            if (CameraBrandIndex == 1) camera = CamFactory<MyTriggerData>.CreatCamera(CameraBrand.DaHua);
-            else if (CameraBrandIndex == 2) camera = CamFactory<MyTriggerData>.CreatCamera(CameraBrand.Basler);
-            else if (CameraBrandIndex == 3) camera = CamFactory<MyTriggerData>.CreatCamera(CameraBrand.DaHeng);
-            else camera = CamFactory<MyTriggerData>.CreatCamera(CameraBrand.HaiKang);
+            if (CameraBrandIndex == 1) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.DaHua);
+            else if (CameraBrandIndex == 2) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.Basler);
+            else if (CameraBrandIndex == 3) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.DaHeng);
+            else camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.HaiKang);
 
             CameraNames.Clear();
             currentCameraInfos = camera.GetListEnum();
@@ -95,7 +96,6 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             {
                 CameraNames.Add($"{item.CameraName};{item.CameraSN}");
             }
-            testLog();
         }
 
         private async void testLog()
@@ -108,6 +108,46 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         }
 
         [ObservableProperty] private string _status;
+
+        [ObservableProperty] private string _status1;
+        [ObservableProperty] private string _status2;
+
+        private WorkerEngine we1 = new WorkerEngine();
+        private WorkerEngine we2 = new WorkerEngine();
+
+        [RelayCommand]
+        private async void RunTest()
+        {
+            Status1 = "";
+            Status2 = "";
+            await Task.Delay(10);
+            we2 = new WorkerEngine();
+            we1.AddProcedure("MultiRunTest", "D:\\Test\\HalScripts");
+            we2.AddProcedure("MultiRunTest", "");
+            runWE1();
+            runWE2();
+
+            we1.RemoveProcedure("MultiRunTest");
+        }
+
+        private int result1;
+        private int result2;
+
+        private void runWE1()
+        {
+            we1.SetParam("MultiRunTest", "input", 1);
+            we1.ExecuteProcedure("MultiRunTest");
+            result1 = we1.GetParam<HTuple>("MultiRunTest", "output");
+            Status1 = result1.ToString();
+        }
+
+        private void runWE2()
+        {
+            we2.SetParam("MultiRunTest", "input", 2);
+            we2.ExecuteProcedure("MultiRunTest");
+            result2 = we2.GetParam<HTuple>("MultiRunTest", "output");
+            Status2 = result2.ToString();
+        }
 
         [ObservableProperty] private bool _isEnabled1 = true;
         [ObservableProperty] private bool _isEnabled2 = true;

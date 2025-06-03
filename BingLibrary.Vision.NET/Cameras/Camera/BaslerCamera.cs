@@ -47,7 +47,7 @@ namespace BingLibrary.Vision.Cameras
 
         public override bool InitDevice(CameraInfo cameraInfo)
         {
-            var listsn = GetListEnum();
+            Info = cameraInfo;
             if (listcaminf.Count < 1) return false;
             currcaminf = listcaminf.Where(t => t[CameraInfoKey.SerialNumber].Equals(cameraInfo.CameraSN)).FirstOrDefault();
             if (currcaminf == null) return false;

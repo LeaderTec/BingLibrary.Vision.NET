@@ -83,6 +83,17 @@ namespace BingLibrary.Vision.Engine
             return false;
         }
 
+        private string lastPath = "";
+
+        private bool CheckSamePath(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return false;
+            if (lastPath == path) return false;
+
+            lastPath = path;
+            return true;
+        }
+
         /// <summary>
         /// 添加过程
         /// </summary>
@@ -91,7 +102,7 @@ namespace BingLibrary.Vision.Engine
         /// <returns>是否添加成功</returns>
         public bool AddProcedure(string name, string path)
         {
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path))
+            if (string.IsNullOrWhiteSpace(name))
                 return false;
 
             if (_devProcedureCalls.ContainsKey(name))
@@ -99,7 +110,8 @@ namespace BingLibrary.Vision.Engine
 
             try
             {
-                HalEngine.Engine.SetProcedurePath(path);
+                if (CheckSamePath(path))
+                    HalEngine.Engine.SetProcedurePath(path);
                 var procedure = new HDevProcedure(name);
                 _devProcedureCalls.Add(name, new HDevProcedureCall(procedure));
                 HalEngine.Engine.UnloadProcedure(name);

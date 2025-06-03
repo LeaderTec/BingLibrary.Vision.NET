@@ -22,7 +22,19 @@ namespace BingLibrary.Vision
     /// </summary>
     public partial class BingImageWindow : UserControl
     {
-        public BingImageWindowData windowData = new BingImageWindowData();
+        public BingImageWindowData WindowData
+        {
+            get => (BingImageWindowData)GetValue(WindowDataProperty);
+            set => SetValue(WindowDataProperty, value);
+        }
+
+        // 注册依赖属性
+        public static readonly DependencyProperty WindowDataProperty =
+            DependencyProperty.Register(
+                nameof(WindowData),
+                typeof(BingImageWindowData),
+                typeof(BingImageWindow),
+                new PropertyMetadata(default(BingImageWindowData)));
 
         private Config config = new Config();
 
@@ -32,25 +44,6 @@ namespace BingLibrary.Vision
             Loaded += BingImageWindow_Loaded;
         }
 
-        public static readonly DependencyProperty WindowDataProperty =
-             DependencyProperty.Register("WindowData", //属性名字
-             typeof(BingImageWindowData), //属性类型
-             typeof(BingImageWindow),//属性所属，及属性所有者
-             new PropertyMetadata(new PropertyChangedCallback((d, e) =>
-             {
-                 var window = (BingImageWindow)d;
-                 // 手动更新绑定或执行其他逻辑
-                 window.DataContext = e.NewValue; // 如果 DataContext 依赖于此属性
-             })));//属性默认值
-
-        public BingImageWindowData WindowData
-        {
-            get
-            {
-                return (BingImageWindowData)GetValue(WindowDataProperty);
-            }
-            set { SetValue(WindowDataProperty, value); }
-        }
 
         private void BingImageWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -75,8 +68,8 @@ namespace BingLibrary.Vision
             await Task.Delay(10);
             try
             {
-                windowData.FitImage();
-                windowData.RefreshWindow();
+                WindowData.FitImage();
+                WindowData.RefreshWindow();
             }
             catch { }
         }
@@ -137,18 +130,19 @@ namespace BingLibrary.Vision
             HOperatorSet.ResetObjDb(4096, 4096, 1);
             HOperatorSet.SetSystem("clip_region", "false");
             HOperatorSet.SetSystem("store_empty_region", "true");
-            iwin.HMouseUp += (sender0, e0) => { if (e0.Button == MouseButton.Right && windowData.WindowCtrl.IsDrawing == false) CM.IsOpen = true; };
-
-            windowData.Init(iwin);
-            windowData.WindowCtrl.IsShowWaterString = config.IsShowWaterString;
-            windowData.WindowCtrl.ShowMode = config.IsShowMargin ? HalconShowing.margin : HalconShowing.fill;
-            windowData.WindowCtrl.CanEdit = config.IsEdit;
-            windowData.WindowCtrl.DrawFinishMode = config.IsDrawFinish ? HalconDrawMode.rightButton : HalconDrawMode.directly;
-            windowData.WindowCtrl.IsShowCross = config.IsShowCross;
-            windowData.WindowCtrl.OnlyShowImage = config.OnlyShowImage;
-            windowData.WindowCtrl.DotLine = config.DotLine;
+            iwin.HMouseUp += (sender0, e0) => { if (e0.Button == MouseButton.Right && WindowData.WindowCtrl.IsDrawing == false) CM.IsOpen = true; };
+            if (WindowData == null)
+                WindowData = new BingImageWindowData();
+            WindowData.Init(iwin);
+            WindowData.WindowCtrl.IsShowWaterString = config.IsShowWaterString;
+            WindowData.WindowCtrl.ShowMode = config.IsShowMargin ? HalconShowing.margin : HalconShowing.fill;
+            WindowData.WindowCtrl.CanEdit = config.IsEdit;
+            WindowData.WindowCtrl.DrawFinishMode = config.IsDrawFinish ? HalconDrawMode.rightButton : HalconDrawMode.directly;
+            WindowData.WindowCtrl.IsShowCross = config.IsShowCross;
+            WindowData.WindowCtrl.OnlyShowImage = config.OnlyShowImage;
+            WindowData.WindowCtrl.DotLine = config.DotLine;
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
 
             //HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color",
             //    config.ColorIndex == 0 ? "white"
@@ -180,7 +174,7 @@ namespace BingLibrary.Vision
 
             Pop.CustomPopupPlacementCallback = new CustomPopupPlacementCallback(placePopup);
             updatePopupPosition();
-            WindowData = windowData;
+            WindowData = WindowData;
         }
 
         //public BackGroundColor WindowBackgroud
@@ -201,8 +195,8 @@ namespace BingLibrary.Vision
                 var rst = OpenImageDialog();
                 if (rst != "")
                 {
-                    windowData.DisplayImage(new HImage(rst));
-                    windowData.RefreshWindow();
+                    WindowData.DisplayImage(new HImage(rst));
+                    WindowData.RefreshWindow();
                 }
             }
             catch { }
@@ -217,11 +211,11 @@ namespace BingLibrary.Vision
                 {
                     string extension = Path.GetExtension(rst);
                     if (rst.Contains("tif"))
-                        windowData.WindowCtrl.image.WriteImage("tiff", new HTuple(0), new HTuple(rst));
+                        WindowData.WindowCtrl.image.WriteImage("tiff", new HTuple(0), new HTuple(rst));
                     else if (rst.Contains("bmp"))
-                        windowData.WindowCtrl.image.WriteImage("bmp", new HTuple(0), new HTuple(rst));
+                        WindowData.WindowCtrl.image.WriteImage("bmp", new HTuple(0), new HTuple(rst));
                     else if (rst.Contains("jpg"))
-                        windowData.WindowCtrl.image.WriteImage("jpge", new HTuple(0), new HTuple(rst));
+                        WindowData.WindowCtrl.image.WriteImage("jpge", new HTuple(0), new HTuple(rst));
                 }
             }
             catch { }
@@ -236,11 +230,11 @@ namespace BingLibrary.Vision
                 {
                     string extension = Path.GetExtension(rst);
                     if (rst.Contains("tif"))
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage().WriteImage("tiff", new HTuple(0), new HTuple(rst));
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage().WriteImage("tiff", new HTuple(0), new HTuple(rst));
                     else if (rst.Contains("bmp"))
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage().WriteImage("bmp", new HTuple(0), new HTuple(rst));
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage().WriteImage("bmp", new HTuple(0), new HTuple(rst));
                     else if (rst.Contains("jpg"))
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage().WriteImage("jpge", new HTuple(0), new HTuple(rst));
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage().WriteImage("jpge", new HTuple(0), new HTuple(rst));
                 }
             }
             catch { }
@@ -250,8 +244,8 @@ namespace BingLibrary.Vision
         {
             try
             {
-                windowData.FitImage();
-                windowData.RefreshWindow();
+                WindowData.FitImage();
+                WindowData.RefreshWindow();
             }
             catch { }
         }
@@ -260,69 +254,69 @@ namespace BingLibrary.Vision
         {
             HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", "white");
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
             HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", "black");
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)
         {
             HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", "gray");
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void MenuItem_Click_3(object sender, RoutedEventArgs e)
         {
             HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", "orange");
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void MenuItem_Click_4(object sender, RoutedEventArgs e)
         {
             HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", "coral");
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void MenuItem_Click_5(object sender, RoutedEventArgs e)
         {
             HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", "red");
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void MenuItem_Click_6(object sender, RoutedEventArgs e)
         {
             HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", "spring green");
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void MenuItem_Click_7(object sender, RoutedEventArgs e)
         {
             HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", "cadet blue");
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void MenuItem_Click_8(object sender, RoutedEventArgs e)
         {
             HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", "indian red");
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void MenuItem_Click_9(object sender, RoutedEventArgs e)
         {
-            windowData.WindowCtrl.ShowMode = (sender as MenuItem).IsChecked == true ? HalconShowing.margin : HalconShowing.fill;
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.ShowMode = (sender as MenuItem).IsChecked == true ? HalconShowing.margin : HalconShowing.fill;
+            WindowData.WindowCtrl.Repaint();
 
             config.IsShowMargin = (sender as MenuItem).IsChecked == true;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
@@ -330,9 +324,9 @@ namespace BingLibrary.Vision
 
         private void MenuItem_Click_10(object sender, RoutedEventArgs e)
         {
-            windowData.WindowCtrl.IsShowWaterString = (sender as MenuItem).IsChecked;
-            windowData.WindowCtrl.Repaint();
-            config.IsShowWaterString = windowData.WindowCtrl.IsShowWaterString;
+            WindowData.WindowCtrl.IsShowWaterString = (sender as MenuItem).IsChecked;
+            WindowData.WindowCtrl.Repaint();
+            config.IsShowWaterString = WindowData.WindowCtrl.IsShowWaterString;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
         }
 
@@ -364,7 +358,7 @@ namespace BingLibrary.Vision
                         try
                         {
                             int tempNum = 0;
-                            windowData.WindowCtrl.hWindowControlWPF.HalconWindow.GetMposition(out mouse_X0, out mouse_Y0, out tempNum);
+                            WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.GetMposition(out mouse_X0, out mouse_Y0, out tempNum);
 
                             if (mouse_X0_old == mouse_X0 && mouse_Y0_old == mouse_Y0)
                             {
@@ -374,9 +368,9 @@ namespace BingLibrary.Vision
                             else
                             {
                                 mouse_X0_old = mouse_X0; mouse_Y0_old = mouse_Y0;
-                                var gray = windowData.WindowCtrl.image.GetGrayval(mouse_X0, mouse_Y0);
+                                var gray = WindowData.WindowCtrl.image.GetGrayval(mouse_X0, mouse_Y0);
                                 HTuple w, h;
-                                windowData.WindowCtrl.image.GetImageSize(out w, out h);
+                                WindowData.WindowCtrl.image.GetImageSize(out w, out h);
                                 zb.Text = "坐标：" + mouse_X0 + " , " + mouse_Y0;
                                 try
                                 {
@@ -485,7 +479,7 @@ namespace BingLibrary.Vision
 
                     try
                     {
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.GetPart(out HTuple row1, out HTuple column1, out HTuple row2, out HTuple column2);
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.GetPart(out HTuple row1, out HTuple column1, out HTuple row2, out HTuple column2);
 
                         //获取可见部分最大像素
                         double partMaxPixels = row2 - row1 > column2 - column1 ? row2 - row1 : column2 - column1;
@@ -498,24 +492,24 @@ namespace BingLibrary.Vision
 
                         HXLDCont rectangle2 = new HXLDCont();
                         rectangle2.GenRectangle2ContourXld(mouse_X0, mouse_Y0, 0, size, size);
-                        windowData.RefreshWindow();
+                        WindowData.RefreshWindow();
 
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("#22b15c");
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.SetLineWidth(4);
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0 - size * 20, mouse_Y0, mouse_X0 - size, mouse_Y0);
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0 + size, mouse_Y0, mouse_X0 + size * 20, mouse_Y0);
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0, mouse_Y0 - size * 20, mouse_X0, mouse_Y0 - size);
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0, mouse_Y0 + size, mouse_X0, mouse_Y0 + size * 20);
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("#22b15c");
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.SetLineWidth(4);
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0 - size * 20, mouse_Y0, mouse_X0 - size, mouse_Y0);
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0 + size, mouse_Y0, mouse_X0 + size * 20, mouse_Y0);
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0, mouse_Y0 - size * 20, mouse_X0, mouse_Y0 - size);
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0, mouse_Y0 + size, mouse_X0, mouse_Y0 + size * 20);
 
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispObj(rectangle2);
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.SetLineWidth(4);
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("red");
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0 - size / 2, mouse_Y0, mouse_X0 + size / 2, mouse_Y0);
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0, mouse_Y0 - size / 2, mouse_X0, mouse_Y0 + size / 2);
-                        windowData.WindowCtrl.hWindowControlWPF.HalconWindow.SetLineWidth(1);
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispObj(rectangle2);
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.SetLineWidth(4);
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("red");
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0 - size / 2, mouse_Y0, mouse_X0 + size / 2, mouse_Y0);
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DispLine(mouse_X0, mouse_Y0 - size / 2, mouse_X0, mouse_Y0 + size / 2);
+                        WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.SetLineWidth(1);
                         if (mouse_X0 == 0 && mouse_Y0 == 0)
                         {
-                            windowData.RefreshWindow();
+                            WindowData.RefreshWindow();
                         }
                     }
                     catch { }
@@ -543,9 +537,9 @@ namespace BingLibrary.Vision
         private void MenuItem_Click_11(object sender, RoutedEventArgs e)
         {
             config.IsShowCross = (sender as MenuItem).IsChecked;
-            windowData.WindowCtrl.IsShowCross = config.IsShowCross;
+            WindowData.WindowCtrl.IsShowCross = config.IsShowCross;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void MenuItem_Click_12(object sender, RoutedEventArgs e)
@@ -559,16 +553,16 @@ namespace BingLibrary.Vision
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
-            windowData.WindowCtrl.IsShowWaterString = (sender as CheckBox).IsChecked == true;
-            windowData.WindowCtrl.Repaint();
-            config.IsShowWaterString = windowData.WindowCtrl.IsShowWaterString;
+            WindowData.WindowCtrl.IsShowWaterString = (sender as CheckBox).IsChecked == true;
+            WindowData.WindowCtrl.Repaint();
+            config.IsShowWaterString = WindowData.WindowCtrl.IsShowWaterString;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
         }
 
         private void CheckBox_Click_1(object sender, RoutedEventArgs e)
         {
-            windowData.WindowCtrl.ShowMode = (sender as CheckBox).IsChecked == true ? HalconShowing.margin : HalconShowing.fill;
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.ShowMode = (sender as CheckBox).IsChecked == true ? HalconShowing.margin : HalconShowing.fill;
+            WindowData.WindowCtrl.Repaint();
             config.IsShowMargin = (sender as CheckBox).IsChecked == true;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
         }
@@ -593,7 +587,7 @@ namespace BingLibrary.Vision
 
                 : "black");
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
             config.ColorIndex = colorSet.SelectedIndex;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
         }
@@ -602,57 +596,57 @@ namespace BingLibrary.Vision
         {
             (sender as System.Windows.Controls.Button).IsEnabled = false;
 
-            windowData.WindowCtrl.IsDrawing = true;
+            WindowData.WindowCtrl.IsDrawing = true;
 
             if (cb.SelectedIndex == 0)
             {
-                ROIRegion rr0 = new ROIRegion(windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRegion());
+                ROIRegion rr0 = new ROIRegion(WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRegion());
                 rr0.draw(iwin.HalconWindow);
                 rr0.ROIName = getRoiName();
-                windowData.ROICtrl.ROIList.Add(rr0);
+                WindowData.ROICtrl.ROIList.Add(rr0);
             }
             else if (cb.SelectedIndex == 1)
             {
                 ROILine rl1 = new ROILine();
                 double r1, c1, r2, c2;
-                windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawLine(out r1, out c1, out r2, out c2);
+                WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawLine(out r1, out c1, out r2, out c2);
                 rl1.createROILine(r1, c1, r2, c2);
                 rl1.draw(iwin.HalconWindow);
                 rl1.ROIName = getRoiName();
-                windowData.ROICtrl.ROIList.Add(rl1);
+                WindowData.ROICtrl.ROIList.Add(rl1);
             }
             else if (cb.SelectedIndex == 2)
             {
                 ROICircle rc2 = new ROICircle();
                 double r1, c1, r;
-                windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawCircle(out r1, out c1, out r);
+                WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawCircle(out r1, out c1, out r);
                 rc2.createROICircle(c1, r1, r);
                 rc2.draw(iwin.HalconWindow);
                 rc2.ROIName = getRoiName();
-                windowData.ROICtrl.ROIList.Add(rc2);
+                WindowData.ROICtrl.ROIList.Add(rc2);
             }
             else if (cb.SelectedIndex == 3)
             {
                 ROIRectangle1 rr3 = new ROIRectangle1();
                 double r1, c1, r2, c2;
-                windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1(out r1, out c1, out r2, out c2);
+                WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1(out r1, out c1, out r2, out c2);
                 rr3.createROIRect1(r1, c1, r2, c2);
                 rr3.draw(iwin.HalconWindow);
                 rr3.ROIName = getRoiName();
-                windowData.ROICtrl.ROIList.Add(rr3);
+                WindowData.ROICtrl.ROIList.Add(rr3);
             }
             else if (cb.SelectedIndex == 4)
             {
                 ROIRectangle2 rr4 = new ROIRectangle2();
                 double r1, c1, p, l1, l2;
-                windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle2(out c1, out r1, out p, out l1, out l2);
+                WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle2(out c1, out r1, out p, out l1, out l2);
                 rr4.createROIRect2(r1, c1, -p, l1, l2);
                 rr4.draw(iwin.HalconWindow);
                 rr4.ROIName = getRoiName();
-                windowData.ROICtrl.ROIList.Add(rr4);
+                WindowData.ROICtrl.ROIList.Add(rr4);
             }
 
-            windowData.WindowCtrl.IsDrawing = false;
+            WindowData.WindowCtrl.IsDrawing = false;
             (sender as Button).IsEnabled = true;
         }
 
@@ -662,9 +656,9 @@ namespace BingLibrary.Vision
             int k = 0;
             for (int j = 0; j < 1024; j++)
             {
-                for (int i = 0; i < windowData.ROICtrl.ROIList.Count; i++)
+                for (int i = 0; i < WindowData.ROICtrl.ROIList.Count; i++)
                 {
-                    if (windowData.ROICtrl.ROIList[i].ROIName == k.ToString())
+                    if (WindowData.ROICtrl.ROIList[i].ROIName == k.ToString())
                     { k++; break; }
                 }
             }
@@ -673,68 +667,68 @@ namespace BingLibrary.Vision
 
         private void c4_Click(object sender, RoutedEventArgs e)
         {
-            windowData.WindowCtrl.CanEdit = (sender as CheckBox).IsChecked == true;
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.CanEdit = (sender as CheckBox).IsChecked == true;
+            WindowData.WindowCtrl.Repaint();
             config.IsEdit = (sender as CheckBox).IsChecked == true;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            windowData.ROICtrl.RemoveActiveRoi();
+            WindowData.ROICtrl.RemoveActiveRoi();
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             (sender as Button).IsEnabled = false;
-            windowData.WindowCtrl.IsDrawing = true;
+            WindowData.WindowCtrl.IsDrawing = true;
 
-            HRegion region = windowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRegion();
+            HRegion region = WindowData.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRegion();
             ROIRegion roi = new ROIRegion(region);
 
             roi.draw(iwin.HalconWindow);
             roi.ROIName = getRoiName();
-            windowData.ROICtrl.ROIList.Add(roi);
+            WindowData.ROICtrl.ROIList.Add(roi);
 
-            windowData.WindowCtrl.IsDrawing = false;
+            WindowData.WindowCtrl.IsDrawing = false;
             (sender as Button).IsEnabled = true;
         }
 
         private void c5_Click(object sender, RoutedEventArgs e)
         {
-            windowData.WindowCtrl.DrawFinishMode = ((sender as CheckBox).IsChecked == true) ? HalconDrawMode.rightButton : HalconDrawMode.directly;
+            WindowData.WindowCtrl.DrawFinishMode = ((sender as CheckBox).IsChecked == true) ? HalconDrawMode.rightButton : HalconDrawMode.directly;
             config.IsDrawFinish = (sender as CheckBox).IsChecked == true;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
         }
 
         private void c20_Click(object sender, RoutedEventArgs e)
         {
-            windowData.WindowCtrl.OnlyShowImage = ((sender as CheckBox).IsChecked == true);
+            WindowData.WindowCtrl.OnlyShowImage = ((sender as CheckBox).IsChecked == true);
             config.OnlyShowImage = (sender as CheckBox).IsChecked == true;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void c21_Click(object sender, RoutedEventArgs e)
         {
-            windowData.WindowCtrl.DotLine = ((sender as CheckBox).IsChecked == true);
+            WindowData.WindowCtrl.DotLine = ((sender as CheckBox).IsChecked == true);
             config.DotLine = (sender as CheckBox).IsChecked == true;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
 
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void iwin_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
 
         private void CheckBox_Click_10(object sender, RoutedEventArgs e)
         {
             config.IsShowCross = (sender as CheckBox).IsChecked == true;
-            windowData.WindowCtrl.IsShowCross = config.IsShowCross;
+            WindowData.WindowCtrl.IsShowCross = config.IsShowCross;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
-            windowData.WindowCtrl.Repaint();
+            WindowData.WindowCtrl.Repaint();
         }
     }
 

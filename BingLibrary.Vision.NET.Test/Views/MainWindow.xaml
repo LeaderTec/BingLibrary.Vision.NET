@@ -45,13 +45,15 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </hc:ComboBox>
-                <Button   DockPanel.Dock="Top" Margin="15"  
-                            Width="200"
-                            Height="36"
-                            Command="{Binding LoadCommand}"
-                            Content="加载相机配置文件"
-                            IsEnabled="{Binding IsEnabled2}"
-                            Style="{StaticResource ButtonDashed}" />
+                <Button
+                    Width="200"
+                    Height="36"
+                    Margin="15"
+                    Command="{Binding LoadCommand}"
+                    Content="加载相机配置文件"
+                    DockPanel.Dock="Top"
+                    IsEnabled="{Binding IsEnabled2}"
+                    Style="{StaticResource ButtonDashed}" />
                 <Grid DockPanel.Dock="Top">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -149,17 +151,21 @@
                             Style="{StaticResource ButtonDashed}" />
                     </Grid>
                 </Grid>
-             
+
                 <hc:TextBox
                     Margin="5"
-                    hc:TitleElement.Title="拼图Count" hc:TitleElement.TitlePlacement="Left"
+                    hc:TitleElement.Title="拼图Count"
+                    hc:TitleElement.TitlePlacement="Left"
                     hc:TitleElement.TitleWidth="80"
-                    DockPanel.Dock="Top" Text="{Binding PinTuCount, UpdateSourceTrigger=PropertyChanged}" />
+                    DockPanel.Dock="Top"
+                    Text="{Binding PinTuCount, UpdateSourceTrigger=PropertyChanged}" />
                 <hc:TextBox
                     Margin="5"
-                    hc:TitleElement.Title="触发字段" hc:TitleElement.TitlePlacement="Left"
+                    hc:TitleElement.Title="触发字段"
+                    hc:TitleElement.TitlePlacement="Left"
                     hc:TitleElement.TitleWidth="80"
-                    DockPanel.Dock="Top" Text="{Binding TriggerVar, UpdateSourceTrigger=PropertyChanged}" />
+                    DockPanel.Dock="Top"
+                    Text="{Binding TriggerVar, UpdateSourceTrigger=PropertyChanged}" />
                 <Border
                     Margin="5"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -227,10 +233,29 @@
                     Content="网卡设置"
                     DockPanel.Dock="Top"
                     Style="{StaticResource ButtonDashed}" />
+                <Button
+                    Width="80"
+                    Margin="5,25,5,5"
+                    HorizontalAlignment="Left"
+                    Command="{Binding RunTestCommand}"
+                    Content="测试运行"
+                    DockPanel.Dock="Top"
+                    Style="{StaticResource ButtonDashed}" />
                 <TextBlock
                     Margin="5"
+                    DockPanel.Dock="Top"
                     FontWeight="Bold"
                     Text="{Binding Status}" />
+                <TextBlock
+                    Margin="5"
+                    DockPanel.Dock="Top"
+                    FontWeight="Bold"
+                    Text="{Binding Status1}" />
+                <TextBlock
+                    Margin="5"
+                    DockPanel.Dock="Top"
+                    FontWeight="Bold"
+                    Text="{Binding Status2}" />
             </DockPanel>
         </Grid>
     </Grid>

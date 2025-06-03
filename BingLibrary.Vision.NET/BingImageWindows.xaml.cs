@@ -36,7 +36,7 @@ namespace BingLibrary.Vision
                     bingImageWindows[i - 1] = new BingImageWindow();
                     bingImageWindows[i - 1].Name = "win" + i;
                     bingImageWindows[i - 1].Margin = new Thickness(1);
-                    UpdateBingImageWindowData(i, bingImageWindows[i - 1].windowData);
+                    UpdateBingImageWindowData(i, bingImageWindows[i - 1].WindowData);
                 }
 
                 switch (value)

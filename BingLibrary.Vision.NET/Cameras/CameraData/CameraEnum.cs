@@ -7,6 +7,7 @@ namespace BingLibrary.Vision.Cameras
         Gige,
         USB,
         GENTL,
+        Dirctory,
     }
 
     public enum CameraBrand

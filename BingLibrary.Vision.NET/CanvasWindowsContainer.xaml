@@ -1,0 +1,92 @@
+﻿<UserControl
+    x:Class="BingLibrary.Vision.CanvasWindowsContainer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:bingVision="clr-namespace:BingLibrary.Vision"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:BingLibrary.Vision"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:RelativeToAbsoluteXConverter x:Key="RelativeToAbsoluteXConverter" />
+        <local:RelativeToAbsoluteYConverter x:Key="RelativeToAbsoluteYConverter" />
+        <local:RelativeToAbsoluteWidthConverter x:Key="RelativeToAbsoluteWidthConverter" />
+        <local:RelativeToAbsoluteHeightConverter x:Key="RelativeToAbsoluteHeightConverter" />
+    </UserControl.Resources>
+
+
+    <Border
+        Margin="5"
+        BorderBrush="#CCCCCC"
+        BorderThickness="1"
+        CornerRadius="4">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Canvas Width="{Binding CanvasWidth, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" Height="{Binding CanvasHeight, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl ItemsSource="{Binding WindowItems, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <!--  使用转换器计算绝对X坐标  -->
+                            <Setter Property="Canvas.Left">
+                                <Setter.Value>
+                                    <MultiBinding Converter="{StaticResource RelativeToAbsoluteXConverter}">
+                                        <Binding Path="RelativeX" />
+                                        <Binding Path="CanvasWidth" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                    </MultiBinding>
+                                </Setter.Value>
+                            </Setter>
+
+                            <!--  使用转换器计算绝对Y坐标  -->
+                            <Setter Property="Canvas.Top">
+                                <Setter.Value>
+                                    <MultiBinding Converter="{StaticResource RelativeToAbsoluteYConverter}">
+                                        <Binding Path="RelativeY" />
+                                        <Binding Path="CanvasHeight" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                    </MultiBinding>
+                                </Setter.Value>
+                            </Setter>
+
+                            <Setter Property="Canvas.ZIndex" Value="{Binding ZOrder}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Background="#F0F0F0"
+                                BorderBrush="#CCCCCC"
+                                BorderThickness="1"
+                                CornerRadius="4">
+                                <!--  使用转换器计算绝对宽度  -->
+                                <bingVision:BingImageWindow
+                                    MinHeight="120"
+                                    Margin="2"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    WindowData="{Binding DisplayData.ImageWindowData, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <bingVision:BingImageWindow.Width>
+                                        <MultiBinding Converter="{StaticResource RelativeToAbsoluteWidthConverter}">
+                                            <Binding Path="RelativeWidth" />
+                                            <Binding Path="CanvasWidth" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                        </MultiBinding>
+                                    </bingVision:BingImageWindow.Width>
+
+                                    <!--  使用转换器计算绝对高度  -->
+                                    <bingVision:BingImageWindow.Height>
+                                        <MultiBinding Converter="{StaticResource RelativeToAbsoluteHeightConverter}">
+                                            <Binding Path="RelativeHeight" />
+                                            <Binding Path="CanvasHeight" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                        </MultiBinding>
+                                    </bingVision:BingImageWindow.Height>
+                                </bingVision:BingImageWindow>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Canvas>
+        </ScrollViewer>
+    </Border>
+</UserControl>

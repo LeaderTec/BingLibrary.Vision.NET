@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace BingLibrary.Vision.Cameras
 {
-    internal class HaiKangCamera<T> : BaseCamera<T>
+    public class HaiKangCamera<T> : BaseCamera<T>
     {
         public HaiKangCamera() : base()
         {
@@ -52,7 +52,7 @@ namespace BingLibrary.Vision.Cameras
                     cameraInfos.Add(new CameraInfo()
                     {
                         CameraName = gigeInfo.chUserDefinedName,
-                        CameraSN = gigeInfo.chModelName,
+                        CameraSN = gigeInfo.chSerialNumber,
                         CameraBrand = CameraBrand.HaiKang,
                         CameraType = CameraType.Gige,
                     });
@@ -64,7 +64,7 @@ namespace BingLibrary.Vision.Cameras
                     cameraInfos.Add(new CameraInfo()
                     {
                         CameraName = usbInfo.chUserDefinedName,
-                        CameraSN = usbInfo.chModelName,
+                        CameraSN = usbInfo.chSerialNumber,
                         CameraBrand = CameraBrand.HaiKang,
                         CameraType = CameraType.USB,
                     });
@@ -76,6 +76,7 @@ namespace BingLibrary.Vision.Cameras
 
         public override bool InitDevice(CameraInfo cameraInfo)
         {
+            Info = cameraInfo;
             HKCameraCtrl.MV_CC_DEVICE_INFO camerainfo = new HKCameraCtrl.MV_CC_DEVICE_INFO();
             var infolist = GetListInfoEnum();
             if (infolist.Count < 1) return false;

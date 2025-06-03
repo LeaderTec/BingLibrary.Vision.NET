@@ -14,29 +14,29 @@ namespace BingLibrary.Vision.Cameras
 
         #region param
 
-        private bool m_bIsOpen = false;                                     ///< Ïà»ú´ò¿ª±êÊ¶
-        private bool m_bIsSnap = false;                                     ///< Ïà»ú¿ªÊ¼²É¼¯±êÊ¶
-        private bool m_bColorFilter = false;                                ///< ±êÊ¶ÊÇ·ñÖ§³ÖBayer¸ñÊ½
-        private bool m_bAwbLampHouse = false;                               ///< ±êÊ¾ÊÇ·ñÖ§³Ö¹âÔ´Ñ¡Ôñ
-        private bool m_bWhiteAutoSelectedIndex = true;                      ///<°×Æ½ºâÁÐ±í¿ò×ª»»±êÖ¾
-        private IGXFactory m_objIGXFactory = null;                          ///<Factory¶ÔÏñ
-        private IGXDevice m_objIGXDevice = null;                            ///<Éè±¸¶ÔÏñ
-        private IGXStream m_objIGXStream = null;                            ///<Á÷¶ÔÏñ
-        private IGXFeatureControl m_objIGXFeatureControl = null;            ///<Ô¶¶ËÉè±¸ÊôÐÔ¿ØÖÆÆ÷¶ÔÏñ
-        private IGXFeatureControl m_objIGXStreamFeatureControl = null;      ///<Á÷²ãÊôÐÔ¿ØÖÆÆ÷¶ÔÏó
-        private IImageProcessConfig m_objCfg = null;                        ///<Í¼ÏñÅäÖÃ²ÎÊý¶ÔÏó
-        private GxBitmap m_objGxBitmap = null;                              ///<Í¼ÏñÏÔÊ¾Àà¶ÔÏó
-        private string m_strPixelColorFilter = null;                        ///<Bayer¸ñÊ½
-        private string m_strBalanceWhiteAutoValue = "Off";                  ///<×Ô¶¯°×Æ½ºâµ±Ç°µÄÖµ
-        private bool m_bEnableColorCorrect = false;                         ///<ÑÕÉ«Ð£ÕýÊ¹ÄÜ±êÖ¾Î»
-        private bool m_bEnableGamma = false;                                ///<GammaÊ¹ÄÜ±êÖ¾Î»
-        private bool m_bEnableSharpness = false;                            ///<Èñ»¯Ê¹ÄÜ±êÖ¾Î»
-        private bool m_bEnableAutoWhite = false;                            ///<×Ô¶¯°×Æ½ºâÊ¹ÄÜ±êÖ¾Î»
-        private bool m_bEnableAwbLight = false;                             ///<×Ô¶¯°×Æ½ºâ¹âÔ´Ê¹ÄÜ±êÖ¾Î»
-        private bool m_bEnableDenoise = false;                              ///<Í¼Ïñ½µÔëÊ¹ÄÜ±êÖ¾Î»
-        private bool m_bEnableSaturation = false;                           ///<±¥ºÍ¶ÈÊ¹ÄÜ±êÖ¾Î»
-        private bool m_bEnumDevices = false;                                ///<ÊÇ·ñÃ¶¾Ùµ½Éè±¸±êÖ¾Î»
-        private List<IGXDeviceInfo> m_listGXDeviceInfo;                     ///<´æ·ÅÃ¶¾Ùµ½µÄÉè±¸µÄÈÝÆ÷
+        private bool m_bIsOpen = false;                                     ///< ï¿½ï¿½ï¿½ï¿½ò¿ª±ï¿½Ê¶
+        private bool m_bIsSnap = false;                                     ///< ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½É¼ï¿½ï¿½ï¿½Ê¶
+        private bool m_bColorFilter = false;                                ///< ï¿½ï¿½Ê¶ï¿½Ç·ï¿½Ö§ï¿½ï¿½Bayerï¿½ï¿½Ê½
+        private bool m_bAwbLampHouse = false;                               ///< ï¿½ï¿½Ê¾ï¿½Ç·ï¿½Ö§ï¿½Ö¹ï¿½Ô´Ñ¡ï¿½ï¿½
+        private bool m_bWhiteAutoSelectedIndex = true;                      ///<ï¿½ï¿½Æ½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½Ö¾
+        private IGXFactory m_objIGXFactory = null;                          ///<Factoryï¿½ï¿½ï¿½ï¿½
+        private IGXDevice m_objIGXDevice = null;                            ///<ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+        private IGXStream m_objIGXStream = null;                            ///<ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        private IGXFeatureControl m_objIGXFeatureControl = null;            ///<Ô¶ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        private IGXFeatureControl m_objIGXStreamFeatureControl = null;      ///<ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        private IImageProcessConfig m_objCfg = null;                        ///<Í¼ï¿½ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        private GxBitmap m_objGxBitmap = null;                              ///<Í¼ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½
+        private string m_strPixelColorFilter = null;                        ///<Bayerï¿½ï¿½Ê½
+        private string m_strBalanceWhiteAutoValue = "Off";                  ///<ï¿½Ô¶ï¿½ï¿½ï¿½Æ½ï¿½âµ±Ç°ï¿½ï¿½Öµ
+        private bool m_bEnableColorCorrect = false;                         ///<ï¿½ï¿½É«Ð£ï¿½ï¿½Ê¹ï¿½Ü±ï¿½Ö¾Î»
+        private bool m_bEnableGamma = false;                                ///<GammaÊ¹ï¿½Ü±ï¿½Ö¾Î»
+        private bool m_bEnableSharpness = false;                            ///<ï¿½ï¿½Ê¹ï¿½Ü±ï¿½Ö¾Î»
+        private bool m_bEnableAutoWhite = false;                            ///<ï¿½Ô¶ï¿½ï¿½ï¿½Æ½ï¿½ï¿½Ê¹ï¿½Ü±ï¿½Ö¾Î»
+        private bool m_bEnableAwbLight = false;                             ///<ï¿½Ô¶ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½Ô´Ê¹ï¿½Ü±ï¿½Ö¾Î»
+        private bool m_bEnableDenoise = false;                              ///<Í¼ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ü±ï¿½Ö¾Î»
+        private bool m_bEnableSaturation = false;                           ///<ï¿½ï¿½ï¿½Í¶ï¿½Ê¹ï¿½Ü±ï¿½Ö¾Î»
+        private bool m_bEnumDevices = false;                                ///<ï¿½Ç·ï¿½Ã¶ï¿½Ùµï¿½ï¿½è±¸ï¿½ï¿½Ö¾Î»
+        private List<IGXDeviceInfo> m_listGXDeviceInfo;                     ///<ï¿½ï¿½ï¿½Ã¶ï¿½Ùµï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         public IGXDeviceInfo GXDeviceInfo;
         private List<IGXDeviceInfo> listCameraInfo = new List<IGXDeviceInfo>();
 
@@ -46,7 +46,7 @@ namespace BingLibrary.Vision.Cameras
 
         public override List<CameraInfo> GetListEnum()
         {
-            //¶ÁÈ¡Ïà»úÁÐ±í
+            //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
             m_objIGXFactory = IGXFactory.GetInstance();
             m_objIGXFactory.Init();
             listCameraInfo.Clear();
@@ -69,6 +69,7 @@ namespace BingLibrary.Vision.Cameras
 
         public override bool InitDevice(CameraInfo cameraInfo)
         {
+            Info = cameraInfo;
             GetListEnum();
             if (listCameraInfo.Count < 1) return false;
 
@@ -110,7 +111,7 @@ namespace BingLibrary.Vision.Cameras
 
         public override void CloseDevice()
         {
-            // Í£Ö¹²É¼¯¹Ø±ÕÉè±¸¡¢¹Ø±ÕÁ÷
+            // Í£Ö¹ï¿½É¼ï¿½ï¿½Ø±ï¿½ï¿½è±¸ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½
             __CloseAll();
             base.Dispose();
         }
@@ -119,14 +120,14 @@ namespace BingLibrary.Vision.Cameras
         {
             try
             {
-                //Ã¿´Î·¢ËÍ´¥·¢ÃüÁîÖ®Ç°Çå¿Õ²É¼¯Êä³ö¶ÓÁÐ
-                //·ÀÖ¹¿âÄÚ²¿»º´æÖ¡£¬Ôì³É±¾´ÎGXGetImageµÃµ½µÄÍ¼ÏñÊÇÉÏ´Î·¢ËÍ´¥·¢µÃµ½µÄÍ¼
+                //Ã¿ï¿½Î·ï¿½ï¿½Í´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®Ç°ï¿½ï¿½Õ²É¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                //ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½É±ï¿½ï¿½ï¿½GXGetImageï¿½Ãµï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Î·ï¿½ï¿½Í´ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½Í¼
                 if (null != m_objIGXStream)
                 {
                     m_objIGXStream.FlushQueue();
                 }
 
-                //·¢ËÍÈí´¥·¢ÃüÁî
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (null != m_objIGXFeatureControl)
                 {
                     AddTriggerData(tData);
@@ -433,25 +434,25 @@ namespace BingLibrary.Vision.Cameras
             {
                 if (null != m_objIGXStreamFeatureControl)
                 {
-                    //ÉèÖÃÁ÷²ãBuffer´¦ÀíÄ£Ê½ÎªOldestFirst
+                    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Bufferï¿½ï¿½ï¿½ï¿½Ä£Ê½ÎªOldestFirst
                     m_objIGXStreamFeatureControl.GetEnumFeature("StreamBufferHandlingMode").SetValue("OldestFirst");
                 }
 
                 if (null != m_objIGXStream)
                 {
-                    //RegisterCaptureCallbackµÚÒ»¸ö²ÎÊýÊôÓÚÓÃ»§×Ô¶¨²ÎÊý(ÀàÐÍ±ØÐëÎªÒýÓÃ
-                    //ÀàÐÍ)£¬ÈôÓÃ»§ÏëÓÃÕâ¸ö²ÎÊý¿ÉÒÔÔÚÎ¯ÍÐº¯ÊýÖÐ½øÐÐÊ¹ÓÃ
+                    //RegisterCaptureCallbackï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½Í±ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
+                    //ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¯ï¿½Ðºï¿½ï¿½ï¿½ï¿½Ð½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
                     //m_objIGXStream.RegisterCaptureCallback(null, OnFrameCallbackFun);
 
-                    //×¢²á»Øµ÷
+                    //×¢ï¿½ï¿½Øµï¿½
 
                     m_objIGXStream.RegisterCaptureCallback(this, OnFrameCallbackFun);//  Delegate_Camera += new Action<Bitmap>(DelegateCallBack);
-                                                                                     //¿ªÊ¼²É¼¯Ö®Ç°¿ÉÉèÖÃbuff¸öÊý
-                                                                                     //¿ªÆô²É¼¯Á÷Í¨µÀ
+                                                                                     //ï¿½ï¿½Ê¼ï¿½É¼ï¿½Ö®Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffï¿½ï¿½ï¿½ï¿½
+                                                                                     //ï¿½ï¿½ï¿½ï¿½ï¿½É¼ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
                     m_objIGXStream.StartGrab();
                 }
 
-                //·¢ËÍ¿ª²ÉÃüÁî
+                //ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (null != m_objIGXFeatureControl)
                 {
                     m_objIGXFeatureControl.GetCommandFeature("AcquisitionStart").Execute();
@@ -459,7 +460,7 @@ namespace BingLibrary.Vision.Cameras
                 m_bIsSnap = true;
                 //m_bIsTrigValid = true;
 
-                // ¸üÐÂ½çÃæUI
+                // ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½UI
                 // __UpdateUI();
                 return true;
             }
@@ -473,18 +474,18 @@ namespace BingLibrary.Vision.Cameras
         {
             try
             {
-                //·¢ËÍÍ£²ÉÃüÁî ----------------------
+                //ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ----------------------
                 if (null != m_objIGXFeatureControl)
                 {
                     m_objIGXFeatureControl.GetCommandFeature("AcquisitionStop").Execute();
                     m_objIGXFeatureControl = null;
                 }
 
-                //¹Ø±Õ²É¼¯Á÷Í¨µÀ
+                //ï¿½Ø±Õ²É¼ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
                 if (null != m_objIGXStream)
                 {
                     m_objIGXStream.StopGrab();
-                    //×¢Ïú²É¼¯»Øµ÷º¯Êý
+                    //×¢ï¿½ï¿½ï¿½É¼ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
                     m_objIGXStream.UnregisterCaptureCallback();
 
                     m_objIGXStream.Close();
@@ -506,47 +507,47 @@ namespace BingLibrary.Vision.Cameras
         {
             try
             {
-                //¹Ø±ÕÁ÷
+                //ï¿½Ø±ï¿½ï¿½ï¿½
                 __CloseStream();
-                // Èç¹ûÉè±¸ÒÑ¾­´ò¿ªÔò¹Ø±Õ£¬±£Ö¤Ïà»úÔÚ³õÊ¼»¯³ö´íÇé¿öÏÂÄÜÔÙ´Î´ò¿ª
+                // ï¿½ï¿½ï¿½ï¿½è±¸ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ£ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½Ú³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù´Î´ï¿½
                 __CloseDevice();
 
-                //´ò¿ªÁÐ±íµÚÒ»¸öÉè±¸
+                //ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½è±¸
                 m_objIGXDevice = m_objIGXFactory.OpenDeviceBySN(GXDeviceInfo.GetSN(), GX_ACCESS_MODE.GX_ACCESS_EXCLUSIVE);
                 m_objIGXFeatureControl = m_objIGXDevice.GetRemoteFeatureControl();
 
-                //´ò¿ªÁ÷
+                //ï¿½ï¿½ï¿½ï¿½
                 if (null != m_objIGXDevice)
                 {
                     m_objIGXStream = m_objIGXDevice.OpenStream(0);
                     m_objIGXStreamFeatureControl = m_objIGXStream.GetFeatureControl();
                 }
 
-                // ½¨ÒéÓÃ»§ÔÚ´ò¿ªÍøÂçÏà»úÖ®ºó£¬¸ù¾Ýµ±Ç°ÍøÂç»·¾³ÉèÖÃÏà»úµÄÁ÷Í¨µÀ°ü³¤Öµ£¬
-                // ÒÔÌá¸ßÍøÂçÏà»úµÄ²É¼¯ÐÔÄÜ,ÉèÖÃ·½·¨²Î¿¼ÒÔÏÂ´úÂë¡£
+                // ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ó£¬¸ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½ç»·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä²É¼ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½ë¡£
                 GX_DEVICE_CLASS_LIST objDeviceClass = m_objIGXDevice.GetDeviceInfo().GetDeviceClass();
                 if (GX_DEVICE_CLASS_LIST.GX_DEVICE_CLASS_GEV == objDeviceClass)
                 {
-                    // ÅÐ¶ÏÉè±¸ÊÇ·ñÖ§³ÖÁ÷Í¨µÀÊý¾Ý°ü¹¦ÄÜ
+                    // ï¿½Ð¶ï¿½ï¿½è±¸ï¿½Ç·ï¿½Ö§ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½ï¿½
                     if (true == m_objIGXFeatureControl.IsImplemented("GevSCPSPacketSize"))
                     {
-                        // »ñÈ¡µ±Ç°ÍøÂç»·¾³µÄ×îÓÅ°ü³¤Öµ
+                        // ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ç»·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ï¿½Öµ
                         uint nPacketSize = m_objIGXStream.GetOptimalPacketSize();
-                        // ½«×îÓÅ°ü³¤ÖµÉèÖÃÎªµ±Ç°Éè±¸µÄÁ÷Í¨µÀ°ü³¤Öµ
+                        // ï¿½ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ç°ï¿½è±¸ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
                         m_objIGXFeatureControl.GetIntFeature("GevSCPSPacketSize").SetValue(nPacketSize);
                     }
                 }
 
                 if (null != m_objIGXFeatureControl)
                 {
-                    //ÉèÖÃ²É¼¯Ä£Ê½Á¬Ðø²É¼¯
+                    //ï¿½ï¿½ï¿½Ã²É¼ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½É¼ï¿½
                     m_objIGXFeatureControl.GetEnumFeature("AcquisitionMode").SetValue("Continuous");
                     if (GXDeviceInfo.GetDeviceClass() == GX_DEVICE_CLASS_LIST.GX_DEVICE_CLASS_GEV)
                     {
-                        //ÉèÖÃÐÄÌø³¬Ê±Ê±¼äÎª1s
-                        //Õë¶ÔÇ§Õ×ÍøÏà»ú£¬³ÌÐòÔÚDebugÄ£Ê½ÏÂµ÷ÊÔÔËÐÐÊ±£¬Ïà»úµÄÐÄÌø³¬Ê±Ê±¼ä×Ô¶¯ÉèÖÃÎª5min£¬
-                        //ÕâÑù×öÊÇÎªÁË²»ÈÃÏà»úµÄÐÄÌø³¬Ê±Ó°Ïì³ÌÐòµÄµ÷ÊÔºÍµ¥²½Ö´ÐÐ£¬Í¬Ê±ÕâÒ²ÒâÎ¶×ÅÏà»úÔÚÕâ5minÄÚÎÞ·¨¶Ï¿ª£¬³ý·ÇÊ¹Ïà»ú¶ÏµçÔÙÉÏµç
-                        //ÎªÁË½â¾öµôÏßÖØÁ¬ÎÊÌâ£¬½«Ïà»úµÄÐÄÌø³¬Ê±Ê±¼äÉèÖÃÎª1s£¬·½±ã³ÌÐòµôÏßºó¿ÉÒÔÖØÐÂÁ¬½Ó
+                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ê±ï¿½ï¿½Îª1s
+                        //ï¿½ï¿½ï¿½Ç§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½DebugÄ£Ê½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ê±ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½Îª5minï¿½ï¿½
+                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ó°ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ÔºÍµï¿½ï¿½ï¿½Ö´ï¿½Ð£ï¿½Í¬Ê±ï¿½ï¿½Ò²ï¿½ï¿½Î¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½5minï¿½ï¿½ï¿½Þ·ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½Ïµï¿½
+                        //Îªï¿½Ë½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª1sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                         m_objIGXFeatureControl.GetIntFeature("GevHeartbeatTimeout").SetValue(1000);
                     }
                 }
@@ -556,7 +557,7 @@ namespace BingLibrary.Vision.Cameras
                 m_objGxBitmap = new GxBitmap(m_objIGXDevice);
                 //Utilbitmap = new Util_Bitmap(m_objIGXDevice);
 
-                // ¸üÐÂÉè±¸´ò¿ª±êÊ¶
+                // ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ò¿ª±ï¿½Ê¶
                 m_bIsOpen = true;
             }
             catch (Exception e)
@@ -564,35 +565,35 @@ namespace BingLibrary.Vision.Cameras
         }
 
         /// <summary>
-        ///  ²É¼¯ÊÂ¼þµÄÎ¯ÍÐº¯Êý
+        ///  ï¿½É¼ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Î¯ï¿½Ðºï¿½ï¿½ï¿½
         /// </summary>
-        /// <param name="objUserParam">ÓÃ»§Ë½ÓÐ²ÎÊý</param>
-        /// <param name="objIFrameData">Í¼ÏñÐÅÏ¢¶ÔÏó</param>
+        /// <param name="objUserParam">ï¿½Ã»ï¿½Ë½ï¿½Ð²ï¿½ï¿½ï¿½</param>
+        /// <param name="objIFrameData">Í¼ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½</param>
         private void OnFrameCallbackFun(object objUserParam, IFrameData objIFrameData)
         {
-            //ÓÃ»§Ë½ÓÐ²ÎÊý obj£¬ÓÃ»§ÔÚ×¢²á»Øµ÷º¯ÊýµÄÊ±ºò´«ÈëÁËÉè±¸¶ÔÏó£¬ÔÚ»Øµ÷º¯ÊýÄÚ²¿¿ÉÒÔ½«´Ë
-            //²ÎÊý»¹Ô­ÎªÓÃ»§Ë½ÓÐ²ÎÊý
+            //ï¿½Ã»ï¿½Ë½ï¿½Ð²ï¿½ï¿½ï¿½ objï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½×¢ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½Ú»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­Îªï¿½Ã»ï¿½Ë½ï¿½Ð²ï¿½ï¿½ï¿½
             //IGXDevice objIGXDevice = objUserParam as IGXDevice;
-            //if (objIFrameData.GetStatus() == GX_FRAME_STATUS_LIST.GX_FRAME_STATUS_SUCCESS)  //ÍêÕûÖ¡
+            //if (objIFrameData.GetStatus() == GX_FRAME_STATUS_LIST.GX_FRAME_STATUS_SUCCESS)  //ï¿½ï¿½ï¿½ï¿½Ö¡
             //{
             // m_objGxBitmap = new GxBitmap(m_objIGXDevice);
             //Bitmap bmp = m_objGxBitmap.GetBmp(objIFrameData);
             GxBitmap bitmap = new GxBitmap(m_objIGXDevice);
             Bitmap bmp = bitmap.GetBmp(objIFrameData);
-            //Êý¾Ý¸üÐÂ
+            //ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½
             ActionGetImage?.Invoke(bmp.Clone() as Bitmap);
             //GC.Collect();
             //}
         }
 
         /// <summary>
-        /// ¹Ø±ÕÁ÷
+        /// ï¿½Ø±ï¿½ï¿½ï¿½
         /// </summary>
         private void __CloseStream()
         {
             try
             {
-                //¹Ø±ÕÁ÷
+                //ï¿½Ø±ï¿½ï¿½ï¿½
                 if (null != m_objIGXStream)
                 {
                     m_objIGXStream.Close();
@@ -606,13 +607,13 @@ namespace BingLibrary.Vision.Cameras
         }
 
         /// <summary>
-        /// ¹Ø±ÕÉè±¸
+        /// ï¿½Ø±ï¿½ï¿½è±¸
         /// </summary>
         private void __CloseDevice()
         {
             try
             {
-                //¹Ø±ÕÉè±¸
+                //ï¿½Ø±ï¿½ï¿½è±¸
                 if (null != m_objIGXDevice)
                 {
                     m_objIGXDevice.Close();
@@ -625,13 +626,13 @@ namespace BingLibrary.Vision.Cameras
         }
 
         /// <summary>
-        /// Í£Ö¹²É¼¯¹Ø±ÕÉè±¸¡¢¹Ø±ÕÁ÷
+        /// Í£Ö¹ï¿½É¼ï¿½ï¿½Ø±ï¿½ï¿½è±¸ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½
         /// </summary>
         private void __CloseAll()
         {
             try
             {
-                // Èç¹ûÎ´Í£²ÉÔòÏÈÍ£Ö¹²É¼¯
+                // ï¿½ï¿½ï¿½Î´Í£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½É¼ï¿½
                 if (m_bIsSnap)
                 {
                     if (null != m_objIGXFeatureControl)
@@ -647,11 +648,11 @@ namespace BingLibrary.Vision.Cameras
             m_bIsSnap = false;
             try
             {
-                //Í£Ö¹Á÷Í¨µÀºÍ¹Ø±ÕÁ÷
+                //Í£Ö¹ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Í¹Ø±ï¿½ï¿½ï¿½
                 if (null != m_objIGXStream)
                 {
                     m_objIGXStream.StopGrab();
-                    //×¢Ïú²É¼¯»Øµ÷º¯Êý
+                    //×¢ï¿½ï¿½ï¿½É¼ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
                     m_objIGXStream.UnregisterCaptureCallback();
                     m_objIGXStream?.Close();
                     m_objIGXStream = null;
@@ -663,7 +664,7 @@ namespace BingLibrary.Vision.Cameras
                 Trace.WriteLine("#######  " + ee);
             }
 
-            //¹Ø±ÕÉè±¸
+            //ï¿½Ø±ï¿½ï¿½è±¸
             __CloseDevice();
             m_bIsOpen = false;
         }

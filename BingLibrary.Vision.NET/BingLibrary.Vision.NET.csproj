@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0-Windows</TargetFramework>
@@ -11,7 +11,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controls\**" />
+    <Compile Remove="Themes\**" />
+    <EmbeddedResource Remove="Controls\**" />
+    <EmbeddedResource Remove="Themes\**" />
+    <None Remove="Controls\**" />
+    <None Remove="Themes\**" />
+    <Page Remove="Controls\**" />
+    <Page Remove="Themes\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Cameras\CamFactory - 复制.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BingLibraryLite" Version="3.0.0.2-pre" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
   </ItemGroup>
