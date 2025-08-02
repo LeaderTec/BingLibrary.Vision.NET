@@ -117,6 +117,8 @@ namespace BingLibrary.Vision.Cameras
             return StartGrabbing();
         }
 
+
+
         /// <summary>
         /// 等待硬触发获取图像
         /// </summary>

@@ -21,6 +21,8 @@ namespace BingLibrary.Vision.Cameras
 
     public static class TransToHimage
     {
+
+       
         /// <summary>
         /// 将Bitmap转换为HImage（支持24位和8位色深）
         /// </summary>

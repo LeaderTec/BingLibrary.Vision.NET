@@ -21,10 +21,7 @@
     <Page Remove="Themes\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Cameras\CamFactory - 复制.cs" />
-  </ItemGroup>
-
+ 
   <ItemGroup>
     <PackageReference Include="BingLibraryLite" Version="3.0.0.2-pre" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />

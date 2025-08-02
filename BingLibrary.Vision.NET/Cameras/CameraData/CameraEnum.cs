@@ -13,6 +13,7 @@ namespace BingLibrary.Vision.Cameras
     public enum CameraBrand
     {
         [Description("海康相机")] HaiKang,
+        [Description("海康相机3D")] HaiKang3D,
         [Description("大华相机")] DaHua,
         [Description("巴斯勒相机")] Basler,
         [Description("大恒相机")] DaHeng,

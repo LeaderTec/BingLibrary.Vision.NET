@@ -70,6 +70,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         private ObservableCollection<string> _cameraBrands = new ObservableCollection<string>()
         {
             "海康相机",
+             "海康相机3D",
             "大华相机",
             "巴斯勒相机",
             "大恒相机"
@@ -85,10 +86,11 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         [RelayCommand]
         private void GetCameraNames()
         {
-            if (CameraBrandIndex == 1) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.DaHua);
-            else if (CameraBrandIndex == 2) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.Basler);
-            else if (CameraBrandIndex == 3) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.DaHeng);
-            else camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.HaiKang);
+            if (CameraBrandIndex == 0) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.HaiKang);
+            else if (CameraBrandIndex == 1) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.HaiKang3D); 
+            else if(CameraBrandIndex == 2) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.DaHua);
+            else if (CameraBrandIndex == 3) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.Basler);
+            else if (CameraBrandIndex == 4) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.DaHeng);
 
             CameraNames.Clear();
             currentCameraInfos = camera.GetListEnum();

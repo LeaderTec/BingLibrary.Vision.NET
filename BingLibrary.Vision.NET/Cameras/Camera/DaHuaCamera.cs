@@ -6,7 +6,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace BingLibrary.Vision.Cameras.Camera
+namespace BingLibrary.Vision.Cameras
 {
     internal class DaHuaCamera<T> : BaseCamera<T>
     {

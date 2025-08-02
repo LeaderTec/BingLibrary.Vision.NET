@@ -8,10 +8,12 @@ namespace BingLibrary.Vision.Cameras
         public string CameraName { get; set; }
         [ObservableProperty]
         public string _cameraSN;
+        public string CameraIP { get; set; }
         public CameraBrand CameraBrand { get; set; }
         public CameraType CameraType { get; set; }
         public CameraStatus Status { get; set; }
         public TriggerSource TriggeSource { get; set; }
+        
     }
 
     public class CameraData : ObservableObject
