@@ -21,6 +21,7 @@ namespace BingLibrary.Vision.Cameras
     {
         public HaiKangCamera3D() : base()
         {
+            pImageDataCallBack=new ImageDataCallBackHandle<T>(this);
         }
       
         #region param
@@ -29,7 +30,7 @@ namespace BingLibrary.Vision.Cameras
         MV3D_LP_DEVICE_INFO_VECTOR m_stVector= null;
         private STC_DataSet m_DevHandle = IntPtr.Zero;
         private Mv3dLpImageMode m_nImgMode = Mv3dLpImageMode.MV3D_LP_Range_Image; 
-        private ImageDataCallBackHandle pImageDataCallBack = new ImageDataCallBackHandle();
+        private ImageDataCallBackHandle<T> pImageDataCallBack ;
         #endregion param
 
 
@@ -298,7 +299,7 @@ namespace BingLibrary.Vision.Cameras
     }
 
 
-    public class ImageDataCallBackHandle : ImageDataCallBack
+    public class ImageDataCallBackHandle<T> : ImageDataCallBack
     {
         public delegate void cbOutputExdelegate(MV3D_LP_IMAGE_DATA pData, ref MV3D_LP_IMAGE_DATA pstImageData, IntPtr pUser);
 
@@ -311,6 +312,12 @@ namespace BingLibrary.Vision.Cameras
         public HImage lightImageOriginal = new HImage();
         public HImage lightImageFinal = new HImage();
         public bool m_hImageLoaded = false;
+        private HaiKangCamera3D<T> _haiKangCamera3D;
+
+        public ImageDataCallBackHandle(HaiKangCamera3D<T> haiKangCamera3D)
+        {
+            _haiKangCamera3D= haiKangCamera3D;
+        }
 
         public override void run(MV3D_LP_IMAGE_DATA pstImageData)
         {
@@ -387,7 +394,11 @@ namespace BingLibrary.Vision.Cameras
                     lightImageOriginal = new HImage();
                     lightImageOriginal.GenImage1("byte",(int) Rece.nWidth, (int)Rece.nHeight, ptr);
                     lightImageFinal= lightImageOriginal.RotateImage(90.0, "constant");
-                    
+
+
+                    _haiKangCamera3D.ActionGet3DImages?.Invoke(new HImage( realImageFinal),new HImage( lightImageFinal)); //回调函数，传递图像数据
+                    //?.Invoke(bitMap.Clone() as Bitmap);
+
                     m_hImageLoaded = true;
                 }
                 catch (Exception ex)

@@ -1,4 +1,5 @@
-﻿using MySqlX.XDevAPI.Common;
+﻿using HalconDotNet;
+using MySqlX.XDevAPI.Common;
 using System.Collections.Concurrent;
 
 namespace BingLibrary.Vision.Cameras
@@ -6,7 +7,10 @@ namespace BingLibrary.Vision.Cameras
     public abstract class BaseCamera<T> : ICamera<T>
     {
         protected BaseCamera()
-        { ActionGetImage += ResetActionImageSignal; }
+        { 
+            ActionGetImage += ResetActionImageSignal; 
+            ActionGet3DImages += ResetAction3DImageSignal;
+        }
 
         #region 触发Data
 
@@ -49,9 +53,19 @@ namespace BingLibrary.Vision.Cameras
         /// 回调委托，获取图像数据，+= 赋值,子类要添加到回调中
         /// </summary>
         protected Action<Bitmap> ActionGetImage { get; set; }
+       
+        protected Bitmap CallBaclImg { get; set; }
 
         protected AutoResetEvent ResetGetImageSignal = new AutoResetEvent(false);
-        protected Bitmap CallBaclImg { get; set; }
+
+        /// <summary>
+        /// 海康3D相机获取图像回调委托，+= 赋值,子类要添加到回调中
+        /// </summary>
+        public Action<HImage, HImage> ActionGet3DImages { get; set; }
+        protected HImage CallBaclDeepImg { get; set; }
+        protected HImage CallBaclLightImg { get; set; }
+        protected AutoResetEvent ResetGet3DImageSignal = new AutoResetEvent(false);
+
 
         #endregion Parm
 
@@ -118,6 +132,43 @@ namespace BingLibrary.Vision.Cameras
         }
 
 
+        List<Action<HImage,HImage>> handles3D = new List<Action<HImage,HImage>>();
+        public bool StartWith_HardTriggerModel3D( Action<HImage,HImage> callbackfunc = null)
+        {
+            try
+            {
+                foreach (Action<HImage, HImage> handle in ActionGet3DImages.GetInvocationList())
+                    foreach (var tempHandle in handles3D)
+                        if (tempHandle == handle)
+                            ActionGet3DImages -= handle;
+                handles3D.Clear();
+                handles3D.Add(callbackfunc);
+            }
+            catch { }
+           
+            if (callbackfunc != null && !ActionGet3DImages.GetInvocationList().Contains(callbackfunc)) ActionGet3DImages += callbackfunc;
+            return StartGrabbing();
+        }
+
+        public bool StartWith_SoftTriggerModel3D(Action<HImage, HImage> callbackfunc = null)
+        {
+            try
+            {
+                foreach (Action<HImage, HImage> handle in ActionGet3DImages.GetInvocationList())
+                    foreach (var tempHandle in handles3D)
+                        if (tempHandle == handle)
+                            ActionGet3DImages -= handle;
+                handles3D.Clear();
+                handles3D.Add(callbackfunc);
+            }
+            catch { }
+
+            if (callbackfunc != null && !ActionGet3DImages.GetInvocationList().Contains(callbackfunc)) ActionGet3DImages += callbackfunc;
+            return StartGrabbing();
+        }
+
+
+
 
         /// <summary>
         /// 等待硬触发获取图像
@@ -135,6 +186,30 @@ namespace BingLibrary.Vision.Cameras
                 return true;
             }
             CallBaclImg?.Dispose();
+            return false;
+        }
+
+        /// <summary>
+        /// 海康3D相机获取图像
+        /// </summary>
+        /// <param name="deepImage"></param>
+        /// <param name="lightImage"></param>
+        /// <param name="outtime"></param>
+        /// <returns></returns>
+        public bool Grab3DImage(out HImage deepImage,out HImage lightImage, int outtime = 30000)
+        {
+            deepImage = null;
+            lightImage = null;
+            if (ResetGet3DImageSignal.WaitOne(outtime))
+            {
+                deepImage =new HImage( CallBaclDeepImg);
+                lightImage = new HImage(CallBaclLightImg);
+                CallBaclDeepImg?.Dispose();
+                CallBaclLightImg?.Dispose();
+                return true;
+            }
+            CallBaclDeepImg?.Dispose();
+            CallBaclLightImg?.Dispose();
             return false;
         }
 
@@ -159,6 +234,32 @@ namespace BingLibrary.Vision.Cameras
             CallBaclImg?.Dispose();
             return false;
         }
+
+        /// <summary>
+        /// 海康3D软触发获取图像
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <param name="outtime"></param>
+        /// <returns></returns>
+        public bool Grab3DImageWithSoftTrigger(out HImage deepImage, out HImage lightImage, int outtime = 30000)
+        {
+            deepImage = null;
+            lightImage = null;
+            if (!SoftTrigger(default)) return false;
+
+            if (ResetGet3DImageSignal.WaitOne(outtime))
+            {
+                deepImage = new HImage(CallBaclDeepImg);
+                lightImage = new HImage(CallBaclLightImg);
+                CallBaclDeepImg?.Dispose();
+                CallBaclLightImg?.Dispose();
+                return true;
+            }
+            CallBaclDeepImg?.Dispose();
+            CallBaclLightImg?.Dispose();
+            return false;
+        }
+
 
         /// <summary>
         /// 软触发
@@ -276,9 +377,21 @@ namespace BingLibrary.Vision.Cameras
             // Debug.WriteLine("reset get img");
         }
 
+        private void ResetAction3DImageSignal(HImage deepImage,HImage lightImage)
+        {
+            CallBaclDeepImg?.Dispose();
+            CallBaclLightImg?.Dispose();
+            CallBaclDeepImg = deepImage;
+            CallBaclLightImg = lightImage;
+            ResetGet3DImageSignal.Set();
+            // Debug.WriteLine("reset get img");
+        }
+
         public void Dispose()
         {
             CallBaclImg?.Dispose();
+            CallBaclDeepImg?.Dispose();
+            CallBaclLightImg?.Dispose();
         }
 
         #endregion protected abstract
