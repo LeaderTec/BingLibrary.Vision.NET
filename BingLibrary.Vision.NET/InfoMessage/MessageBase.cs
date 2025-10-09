@@ -23,6 +23,8 @@ namespace BingLibrary.Vision
 
         public HalconColors ShowColor { get; set; } = HalconColors.绿色;
 
+        public HalconColors BackgroundColor { get; set; }=HalconColors.半透明;
+
         public string ShowContent { get; set; } = string.Empty;
 
         public int ShowFontSize { set; get; }
@@ -31,7 +33,7 @@ namespace BingLibrary.Vision
 
         public HalconCoordinateSystem ShowMode { set; get; }
 
-        public MessageBase(double posX, double posY, string text, int fontsize = 12, HalconColors color = HalconColors.绿色, bool showBox = true, HalconCoordinateSystem mode = HalconCoordinateSystem.image)
+        public MessageBase(double posX, double posY, string text, int fontsize = 12, HalconColors color = HalconColors.绿色, bool showBox = true, HalconColors backgroundColor= HalconColors.半透明,HalconCoordinateSystem mode = HalconCoordinateSystem.image)
         {
             PositionX = posX;
             PositionY = posY;
@@ -40,6 +42,7 @@ namespace BingLibrary.Vision
             ShowFontSize = fontsize;
             ShowMode = mode;
             ShowBox = showBox;
+            BackgroundColor= backgroundColor;
         }
     }
 }

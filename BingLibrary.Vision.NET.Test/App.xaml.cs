@@ -1,5 +1,7 @@
 ﻿using BingLibrary.Vision.NET.Test.Views;
+using BingLibraryLite.Log.Services;
 using Prism.Ioc;
+using Serilog;
 using System.Windows;
 
 namespace BingLibrary.Vision.NET.Test
@@ -9,6 +11,12 @@ namespace BingLibrary.Vision.NET.Test
     /// </summary>
     public partial class App
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            LogService.Initialize();
+            base.OnStartup(e);
+        }
+
         protected override Window CreateShell()
         {
             return Container.Resolve<MainWindow>();
@@ -16,8 +24,7 @@ namespace BingLibrary.Vision.NET.Test
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<BingLibraryLite.Services.ILoggerService, BingLibraryLite.Logs.SerilogLoggerService>();
-            containerRegistry.RegisterForNavigation<BingLibraryLite.Logs.LoggerServiceWin>("LogWin");
-        }
+            containerRegistry.RegisterInstance<ILogger>(LogService.Logger);
+             }
     }
 }

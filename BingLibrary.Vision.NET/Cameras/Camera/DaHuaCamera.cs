@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace BingLibrary.Vision.Cameras
 {
-    internal class DaHuaCamera<T> : BaseCamera<T>
+    public class DaHuaCamera<T> : BaseCamera<T>
     {
         public DaHuaCamera() : base()
         {
@@ -41,7 +41,7 @@ namespace BingLibrary.Vision.Cameras
 
         #region operate
 
-        public override List<CameraInfo> GetListEnum()
+        public override List<CameraInfo> GetListEnum(string manufacturerNameFilter="")
         {
             GC.Collect();
             List<CameraInfo> cameraInfos = new List<CameraInfo>();
@@ -64,16 +64,23 @@ namespace BingLibrary.Vision.Cameras
                                 deviceList.pDevInfo + Marshal.SizeOf(typeof(IMVDefine.IMV_DeviceInfo)) * i,
                                 typeof(IMVDefine.IMV_DeviceInfo));
 
-                    cameraInfos.Add(new CameraInfo()
+
+                    //厂商名字不等时加入
+                    if (manufacturerNameFilter != deviceInfo.vendorName)
                     {
-                        CameraName = deviceInfo.cameraName,
-                        CameraSN = deviceInfo.serialNumber,
-                        CameraBrand = CameraBrand.DaHua,
-                        CameraType =
-                        deviceInfo.nCameraType == IMVDefine.IMV_ECameraType.typeGigeCamera ? CameraType.Gige :
-                        deviceInfo.nCameraType == IMVDefine.IMV_ECameraType.typeU3vCamera ? CameraType.USB :
-                        CameraType.Gige,
-                    });
+                        cameraInfos.Add(new CameraInfo()
+                        {
+                            CameraName = deviceInfo.cameraName,
+                            CameraSN = deviceInfo.serialNumber,
+                            CameraBrand = CameraBrand.DaHua,
+                            ManufacturerName = deviceInfo.vendorName,
+                            CameraType =
+                           deviceInfo.nCameraType == IMVDefine.IMV_ECameraType.typeGigeCamera ? CameraType.Gige :
+                           deviceInfo.nCameraType == IMVDefine.IMV_ECameraType.typeU3vCamera ? CameraType.USB :
+                           CameraType.Gige,
+                        });
+                    }
+                       
                 }
             }
 

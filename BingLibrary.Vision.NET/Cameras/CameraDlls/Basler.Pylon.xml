@@ -28347,7 +28347,9 @@ have the compression status <see cref="F:Basler.Pylon.CompressionStatus.Ok" />.
         </member>
         <member name="P:Basler.Pylon.PLGigECamera.ShaftEncoderModuleCounterModeEnum.IgnoreDirection">
             <summary>
-                <para>The tick counter of the shaft encoder module increments for forward ticks for reverse ticks, i.e. the tick counts are incremented regardless of the direction of movement.</para>
+                <para>The tick counter of the shaft encoder module increments for forward ticks for reverse ticks, i.e. the tick counts are incremented re
+				
+dless of the direction of movement.</para>
                 <para>Applies to:  GigE</para>
             </summary>
         </member>

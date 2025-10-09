@@ -57,6 +57,11 @@ namespace BingLibrary.Vision
         /// </summary>
         /// <param name="image"></param>
         public void DisplayImage(HImage image) => this.WindowCtrl.ShowImageToWindow(image);
+        /// <summary>
+        /// 获取当前窗口图像
+        /// </summary>
+        /// <returns></returns>
+        public HImage GetImage() => this.WindowCtrl.image;
 
         /// <summary>
         /// 适应图像到窗口
@@ -180,7 +185,7 @@ namespace BingLibrary.Vision
         /// <param name="fontsize"></param>
         /// <param name="color"></param>
         /// <param name="mode"></param>
-        public void DisplayMessage(string message, int row, int column, int fontsize = 12, HalconColors color = HalconColors.绿色, bool showBox = true, HalconCoordinateSystem mode = HalconCoordinateSystem.image) => this.MessageCtrl.AddMessageVar(message, row, column, fontsize, color, showBox, mode);
+        public void DisplayMessage(string message, int row, int column, int fontsize = 12, HalconColors color = HalconColors.绿色, bool showBox = true, HalconColors backgroundColor= HalconColors.半透明,HalconCoordinateSystem mode = HalconCoordinateSystem.image) => this.MessageCtrl.AddMessageVar(message, row, column, fontsize, color, showBox, backgroundColor, mode);
 
         /// <summary>
         /// 清空所有显示文字

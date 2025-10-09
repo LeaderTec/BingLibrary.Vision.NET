@@ -1,6 +1,6 @@
-﻿using BingLibrary.Extension;
-using BingLibrary.Vision.Cameras.CameraSDK.HaiKang;
+﻿using BingLibrary.Vision.Cameras.CameraSDK.HaiKang;
 using BingLibrary.Vision.NET.Cameras.Camera;
+using BingLibraryLite.Extension;
 using HalconDotNet;
 using MVSDK_Net;
 using Org.BouncyCastle.Asn1.Tsp;
@@ -9,11 +9,11 @@ using System.Collections.Generic;
 using System.Collections.Generic; 
 using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text; 
 using System.Threading.Tasks;
-
 using STC_DataSet = System.IntPtr;
 namespace BingLibrary.Vision.Cameras
 {
@@ -42,7 +42,7 @@ namespace BingLibrary.Vision.Cameras
                 int c = timeout / internalTime;
                 for (int i = 0; i < c; i++)
                 {
-                    await internalTime;
+                    await Task.Delay(internalTime);
                     if (pImageDataCallBack.m_hImageLoaded) break;
                 }
                  
@@ -58,7 +58,7 @@ namespace BingLibrary.Vision.Cameras
         }
 
 
-        public override List<CameraInfo> GetListEnum()
+        public override List<CameraInfo> GetListEnum(string manufacturerNameFilter = "")
         {
             GC.Collect();
             List<CameraInfo> cameraInfos = new List<CameraInfo>();
@@ -92,16 +92,23 @@ namespace BingLibrary.Vision.Cameras
                 strModelName = strModelName.TrimEnd('\0');
                 string strCurrentIp = m_stVector[i].chCurrentIp;
                 strCurrentIp = strCurrentIp.TrimEnd('\0'); 
+                string manufacturerName= m_stVector[i].chManufacturerName;
+                manufacturerName = manufacturerName.TrimEnd('\0');
 
-                cameraInfos.Add(new CameraInfo()
+                if (manufacturerNameFilter != manufacturerName)
                 {
-                    CameraName = strModelName,
-                    CameraSN = strSerialNumber,
-                    CameraBrand = CameraBrand.HaiKang3D,
-                    CameraType = CameraType.Gige,
-                    CameraIP = strCurrentIp
+                    cameraInfos.Add(new CameraInfo()
+                    {
+                        CameraName = strModelName,
+                        CameraSN = strSerialNumber,
+                        ManufacturerName = manufacturerName,
+                        CameraBrand = CameraBrand.HaiKang3D,
+                        CameraType = CameraType.Gige,
+                        CameraIP = strCurrentIp
 
-                });
+                    });
+                }
+                  
             }
 
           
@@ -347,7 +354,7 @@ namespace BingLibrary.Vision.Cameras
 
                     }
 
-                    var Rece = pstImageData;
+                    MV3D_LP_IMAGE_DATA Rece = pstImageData;
                    
 
                     Parallel.Invoke(

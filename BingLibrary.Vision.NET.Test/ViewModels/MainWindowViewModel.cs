@@ -11,15 +11,14 @@ using System.Drawing;
 using System.Threading.Tasks;
 using System;
 using System.Diagnostics;
-using Prism.Regions;
-using BingLibraryLite.Services;
+using BingLibraryLite.Log.Services;
 
-using System.Collections.ObjectModel;
-
-using System.Collections.Generic;
-using BingLibrary.Communication;
+using System.Collections.Generic; 
 using BingLibrary.Vision.Engine;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Prism.Navigation.Regions;
+using Serilog;
+using BingLibraryLite.Tools;
 
 namespace BingLibrary.Vision.NET.Test.ViewModels
 {
@@ -39,10 +38,10 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
             set { SetProperty(ref _title, value); }
         }
 
-        private BingLibraryLite.Services.ILoggerService _loggerService;
+        private  ILogger _loggerService;
         private IRegionManager _regionManager;
 
-        public MainWindowViewModel(IRegionManager regionManager, BingLibraryLite.Services.ILoggerService loggerService)
+        public MainWindowViewModel(IRegionManager regionManager, ILogger loggerService)
         {
             IsEnabled1 = true;//打开相机
             IsEnabled2 = true;//关闭相机
@@ -70,7 +69,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         private ObservableCollection<string> _cameraBrands = new ObservableCollection<string>()
         {
             "海康相机",
-             "海康相机3D",
+            "海康相机3D",
             "大华相机",
             "巴斯勒相机",
             "大恒相机"
@@ -104,7 +103,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         {
             for (int i = 0; i < 200; i++)
             {
-                _loggerService.Info(i.ToString());
+                _loggerService.Information(i.ToString());
                 await Task.Delay(1);
             }
         }
@@ -207,7 +206,7 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
 
         private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1);
 
-        private BingLibrary.Tools.AsyncQueue<Bitmap> bimaps = new Tools.AsyncQueue<Bitmap>();
+        private AsyncQueue<Bitmap> bimaps = new AsyncQueue<Bitmap>();
 
         private System.Diagnostics.Stopwatch sw = new Stopwatch();
 

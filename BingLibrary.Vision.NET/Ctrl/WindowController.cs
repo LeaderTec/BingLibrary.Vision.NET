@@ -1,4 +1,4 @@
-using BingLibrary.Extension;
+using BingLibraryLite.Extension;
 using HalconDotNet;
 using System.Drawing.Imaging;
 using System.Windows.Media;
@@ -358,6 +358,7 @@ namespace BingLibrary.Vision
             if (image != null)
             {
                 await semaphoreSlim.WaitAsync();
+                await Task.Delay(50);
                 try
                 {
                     imageTemp?.Dispose();
@@ -367,7 +368,7 @@ namespace BingLibrary.Vision
                 }
                 catch { }
 
-                await semaphoreSlim.Release();
+                 semaphoreSlim.Release();
             }
         }
 
@@ -720,10 +721,10 @@ namespace BingLibrary.Vision
             {
                 try
                 {
-                    HOperatorSet.SetFont(window, "Î¢ÈíÑÅºÚ" + "-" + message.ShowFontSize.ToString());
+                    HOperatorSet.SetFont(window, "Ó×Ô²" + "-" + message.ShowFontSize.ToString());
                     HOperatorSet.DispText(window, message.ShowContent, message.ShowMode.ToDescription(), new HTuple(message.PositionX),
-                        new HTuple(message.PositionY), message.ShowColor.ToDescription(), new HTuple("box", "box_color"),
-                        new HTuple(message.ShowBox ? "true" : "false", "#ffffff77"));
+                        new HTuple(message.PositionY), message.ShowColor.ToDescription(), new HTuple("box", "box_color","shadow", "box_padding"),
+                        new HTuple(message.ShowBox ? "true" : "false", message.BackgroundColor.ToDescription(),"false",5));
                 }
                 catch (Exception ex)
                 {

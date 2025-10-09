@@ -73,7 +73,7 @@ namespace BingLibrary.Vision.Cameras
 
         public abstract void CloseDevice();
 
-        public abstract List<CameraInfo> GetListEnum();
+        public abstract List<CameraInfo> GetListEnum(string manufacturerNameFilter= "");
 
         public abstract bool InitDevice(CameraInfo cameraInfo);
 
@@ -108,7 +108,7 @@ namespace BingLibrary.Vision.Cameras
             }
             catch { }
             // if (hardsource == TriggerSource.Software) hardsource = TriggerSource.Line0;
-            SetTriggerMode(TriggerMode.On, hardsource);
+            //SetTriggerMode(TriggerMode.On, hardsource);
             if (callbackfunc != null && !ActionGetImage.GetInvocationList().Contains(callbackfunc)) ActionGetImage += callbackfunc;
             return StartGrabbing();
         }

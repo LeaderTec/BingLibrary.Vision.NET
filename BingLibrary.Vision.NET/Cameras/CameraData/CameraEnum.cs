@@ -10,6 +10,17 @@ namespace BingLibrary.Vision.Cameras
         Dirctory,
     }
 
+    /// <summary>
+    /// 相机状态枚举
+    /// </summary>
+    public enum CameraStatus
+    {
+        [Description("未连接")] Disconnected,
+        [Description("已连接")] Connected,
+        [Description("正在采集")] Grabbing,
+        [Description("错误状态")] Error,
+    }
+
     public enum CameraBrand
     {
         [Description("海康相机")] HaiKang,

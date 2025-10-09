@@ -33,7 +33,7 @@ namespace BingLibrary.Vision.Cameras
 
         #region operate
 
-        public override List<CameraInfo> GetListEnum()
+        public override List<CameraInfo> GetListEnum(string manufacturerNameFilter="")
         {
             GC.Collect();
             List<CameraInfo> cameraInfos = new List<CameraInfo>();
@@ -49,13 +49,20 @@ namespace BingLibrary.Vision.Cameras
                 if (device.nTLayerType == HKCameraCtrl.MV_GIGE_DEVICE)
                 {
                     HKCameraCtrl.MV_GIGE_DEVICE_INFO gigeInfo = (HKCameraCtrl.MV_GIGE_DEVICE_INFO)HKCameraCtrl.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(HKCameraCtrl.MV_GIGE_DEVICE_INFO));
-                    cameraInfos.Add(new CameraInfo()
+                    
+                    //厂商名字不等时加入
+                    if (manufacturerNameFilter != gigeInfo.chManufacturerName)
                     {
-                        CameraName = gigeInfo.chUserDefinedName,
-                        CameraSN = gigeInfo.chSerialNumber,
-                        CameraBrand = CameraBrand.HaiKang,
-                        CameraType = CameraType.Gige,
-                    });
+                        cameraInfos.Add(new CameraInfo()
+                        {
+                            CameraName = gigeInfo.chUserDefinedName,
+                            ManufacturerName = gigeInfo.chManufacturerName,
+                            CameraSN = gigeInfo.chSerialNumber,
+                            CameraBrand = CameraBrand.HaiKang,
+                            CameraType = CameraType.Gige,
+                        });
+                    }
+                    
                 }
                 else if (device.nTLayerType == HKCameraCtrl.MV_USB_DEVICE)
                 {

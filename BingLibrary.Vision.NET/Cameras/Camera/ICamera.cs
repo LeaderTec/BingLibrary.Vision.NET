@@ -10,11 +10,13 @@ namespace BingLibrary.Vision.Cameras
 
         public bool TryGetNextTriggerData(out T result);
 
+        public void AddTriggerData(T data);
+
         /// <summary>
         /// 获取相机SN枚举
         /// </summary>
         /// <returns></returns>
-        List<CameraInfo> GetListEnum();
+        List<CameraInfo> GetListEnum(string manufacturerNameFilter="");
 
         /// <summary>
         /// 初始化相机

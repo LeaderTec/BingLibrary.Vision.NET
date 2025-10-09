@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0-Windows</TargetFramework>
+    <TargetFramework>net9.0-Windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
 	  <UseWPF>true</UseWPF>
 
 	  <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Configurations>Debug;Release;Plugin</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,12 +22,15 @@
     <Page Remove="Themes\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Cameras\CamManager.cs" />
+    <Compile Remove="Cameras\ICamManager.cs" />
+  </ItemGroup>
+
  
   <ItemGroup>
-    <PackageReference Include="BingLibraryLite" Version="3.0.0.2-pre" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
+    <PackageReference Include="BingLibraryLite" Version="4.0.2.5-pre" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" /> 
   </ItemGroup>
 	<ItemGroup>
 	

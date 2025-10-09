@@ -3,10 +3,11 @@ using BingLibrary.Vision.Cameras.CameraSDK.DaHeng;
 using BingLibrary.Vision.Cameras.CameraSDK.HaiKang;
 using GxIAPINET;
 using System.Diagnostics;
+using System.IO;
 
 namespace BingLibrary.Vision.Cameras
 {
-    internal class DaHengCamera<T> : BaseCamera<T>
+    public class DaHengCamera<T> : BaseCamera<T>
     {
         public DaHengCamera() : base()
         {
@@ -44,7 +45,7 @@ namespace BingLibrary.Vision.Cameras
 
         #region Operate
 
-        public override List<CameraInfo> GetListEnum()
+        public override List<CameraInfo> GetListEnum(string manufacturerNameFilter="")
         {
             //��ȡ����б�
             m_objIGXFactory = IGXFactory.GetInstance();
@@ -56,13 +57,21 @@ namespace BingLibrary.Vision.Cameras
 
             foreach (var item in listCameraInfo)
             {
-                cameraInfos.Add(new CameraInfo()
+
+
+                //厂商名字不等时加入
+                if (manufacturerNameFilter != item.GetVendorName())
                 {
-                    CameraName = item.GetUserID(),
-                    CameraSN = item.GetSN(),
-                    CameraBrand = CameraBrand.DaHeng,
-                    CameraType = CameraType.Gige,
-                });
+                    cameraInfos.Add(new CameraInfo()
+                    {
+                        CameraName = item.GetUserID(),
+                        CameraSN = item.GetSN(),
+                        ManufacturerName= item.GetVendorName(),
+                        CameraBrand = CameraBrand.DaHeng,
+                        CameraType = CameraType.Gige,
+                    });
+                }
+                   
             }
             return cameraInfos;
         }

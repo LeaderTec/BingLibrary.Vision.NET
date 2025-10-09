@@ -1,11 +1,12 @@
 ﻿using Basler.Pylon;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Navigation;
 
 namespace BingLibrary.Vision.Cameras
 {
-    internal class BaslerCamera<T> : BaseCamera<T>
+    public class BaslerCamera<T> : BaseCamera<T>
     {
         #region Parm
 
@@ -26,7 +27,7 @@ namespace BingLibrary.Vision.Cameras
 
         #region Opr
 
-        public override List<CameraInfo> GetListEnum()
+        public override List<CameraInfo> GetListEnum(string manufacturerNameFilter = "")
         {
             listcaminf.Clear();
             listcaminf = CameraFinder.Enumerate();
@@ -34,14 +35,21 @@ namespace BingLibrary.Vision.Cameras
             List<CameraInfo> cameraInfos = new List<CameraInfo>();
             foreach (var lf in listcaminf)
             {
-                cameraInfos.Add(new CameraInfo()
+
+                //厂商名字不等时加入
+                if (manufacturerNameFilter != lf[CameraInfoKey.VendorName])
+                { 
+                    cameraInfos.Add(new CameraInfo()
                 {
                     CameraName = lf[CameraInfoKey.DeviceID],
                     CameraSN = lf[CameraInfoKey.SerialNumber],
+                    ManufacturerName= lf[CameraInfoKey.VendorName],
                     CameraType = CameraType.Gige,
                     CameraBrand = CameraBrand.Basler,
                 });
-            };
+                }
+            }
+            ;
             return cameraInfos;
         }
 

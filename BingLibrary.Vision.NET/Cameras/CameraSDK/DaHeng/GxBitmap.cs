@@ -217,26 +217,13 @@ namespace BingLibrary.Vision.Cameras.CameraSDK.DaHeng
             //return m_bitmapForSave.Clone(new Rectangle(0, 0, m_bitmapForSave.Width, m_bitmapForSave.Height), m_bitmapForSave.PixelFormat);/*m_bitmapForSave.Clone() as Bitmap;*/
         }
 
-        public static Bitmap DeepCopyBitmap(Bitmap bitmap)
-
+        public static Bitmap DeepCopyBitmap(Bitmap sourceBitmap)
         {
-            try
-            {
-                Bitmap dstBitmap = null;
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    BinaryFormatter bf = new BinaryFormatter();
-                    bf.Serialize(ms, bitmap);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    dstBitmap = (Bitmap)bf.Deserialize(ms);
-                    ms.Close();
-                }
-                return dstBitmap;
-            }
-            catch (Exception ex)
-            {
+            if (sourceBitmap == null)
                 return null;
-            }
+
+            // 直接使用 Clone 方法
+            return (Bitmap)sourceBitmap.Clone();
         }
 
         /// <summary>

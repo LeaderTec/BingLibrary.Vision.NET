@@ -96,5 +96,7 @@ namespace BingLibrary.Vision
         [Description("#000080c0")] 海军蓝色七五成,
         [Description("#00008080")] 海军蓝色五成,
         [Description("#00008040")] 海军蓝色二五成,
+
+        [Description("#ffffff77")] 半透明,
     }
 }

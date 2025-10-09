@@ -43,9 +43,9 @@ namespace BingLibrary.Vision
         /// <param name="fontsize"></param>
         /// <param name="color"></param>
         /// <param name="mode"></param>
-        public void AddMessageVar(string message, int row, int column, int fontsize = 12, HalconColors color = HalconColors.绿色, bool showBox = true, HalconCoordinateSystem mode = HalconCoordinateSystem.image)
+        public void AddMessageVar(string message, int row, int column, int fontsize = 12, HalconColors color = HalconColors.绿色, bool showBox = true,HalconColors backgroundColor= HalconColors.半透明, HalconCoordinateSystem mode = HalconCoordinateSystem.image)
         {
-            MessageList.Add(new MessageBase(row, column, message, fontsize, color, showBox, mode));
+            MessageList.Add(new MessageBase(row, column, message, fontsize, color, showBox, backgroundColor,mode));
         }
 
         /// <summary>

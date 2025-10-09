@@ -1,4 +1,4 @@
-using BingLibrary.Extension;
+using BingLibraryLite.Extension;
 using HalconDotNet;
 using System.Collections.ObjectModel;
 

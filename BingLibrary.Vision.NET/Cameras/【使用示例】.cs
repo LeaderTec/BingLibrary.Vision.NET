@@ -11,9 +11,9 @@ namespace BingLibrary.Vision.Cameras
         {
             //创建相机
             //海康相机
-            camera1 = CamFactory.CreatCamera(CameraBrand.HaiKang);
+            camera1 = CamManager.CreatCamera(CameraBrand.HaiKang);
             //大华相机
-            camera2 = CamFactory.CreatCamera(CameraBrand.DaHua);
+            camera2 = CamManager.CreatCamera(CameraBrand.DaHua);
 
             //获取相机SN枚举，非必要
             var cams1 = camera1.GetListEnum();
