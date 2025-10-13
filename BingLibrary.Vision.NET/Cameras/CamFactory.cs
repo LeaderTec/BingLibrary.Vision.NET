@@ -1,11 +1,5 @@
-﻿using BingLibrary.Vision.Cameras;
-using BingLibrary.Vision.NET.Cameras.Camera;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Concurrent;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using Timer = System.Threading.Timer;
 
@@ -26,7 +20,6 @@ namespace BingLibrary.Vision.Cameras
      * ======================================
     *************************************************************************************/
 
-  
     /// <summary>
     /// 相机工厂类，用于管理不同品牌的相机实例
     /// </summary>
@@ -76,6 +69,7 @@ namespace BingLibrary.Vision.Cameras
                 if (camera == null)
                 {
                     #region 保护逻辑，确保相机确实能被初始化
+
                     // 尝试查找相机信息
                     CameraInfo cameraInfo = null;
                     foreach (CameraBrand brand in Enum.GetValues(typeof(CameraBrand)))
@@ -100,7 +94,8 @@ namespace BingLibrary.Vision.Cameras
                         camera.Dispose();
                         throw new CameraFactoryException($"初始化相机失败 (SN: {cameraSN})", null, new List<string> { cameraSN });
                     }
-                    #endregion
+
+                    #endregion 保护逻辑，确保相机确实能被初始化
 
                     // 添加到字典和列表中
                     try
@@ -165,8 +160,9 @@ namespace BingLibrary.Vision.Cameras
                 throw new CameraFactoryException($"连接相机并设置软触发出图事件失败 (SN: {cameraSN})", ex, new List<string> { cameraSN });
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="cameraInfoInput"></param>
         /// <returns></returns>
@@ -287,8 +283,7 @@ namespace BingLibrary.Vision.Cameras
             });
         }
 
-        #endregion
-
+        #endregion 软触发相关事件和方法
 
         #region 字段和属性
 
@@ -328,7 +323,8 @@ namespace BingLibrary.Vision.Cameras
             }
         }
 
-        #endregion
+
+        #endregion 字段和属性
 
         #region 事件
 
@@ -342,7 +338,7 @@ namespace BingLibrary.Vision.Cameras
         /// </summary>
         public event EventHandler<CameraDiscoveredEventArgs> CameraDiscovered;
 
-        #endregion
+        #endregion 事件
 
         #region 构造函数和析构函数
 
@@ -391,7 +387,7 @@ namespace BingLibrary.Vision.Cameras
             }
         }
 
-        #endregion
+        #endregion 构造函数和析构函数
 
         #region 初始化相关方法
 
@@ -534,7 +530,7 @@ namespace BingLibrary.Vision.Cameras
             return successCount;
         }
 
-        #endregion
+        #endregion 初始化相关方法
 
         #region 相机获取和管理方法
 
@@ -739,7 +735,7 @@ namespace BingLibrary.Vision.Cameras
             return false;
         }
 
-        #endregion
+        #endregion 相机获取和管理方法
 
         #region 相机创建和枚举方法
 
@@ -784,15 +780,19 @@ namespace BingLibrary.Vision.Cameras
                 case CameraBrand.HaiKang:
                     camera = new HaiKangCamera<T>();
                     break;
+
                 case CameraBrand.HaiKang3D:
                     camera = new HaiKangCamera3D<T>();
                     break;
+
                 case CameraBrand.HaiKangNet:
                     camera = new HaiKangCameraNet<T>();
                     break;
+
                 case CameraBrand.HaiKangInterfaceNet:
                     camera = new HaiKangCameraInterfaceNet<T>();
                     break;
+
                 case CameraBrand.DaHua:
                     camera = new DaHuaCamera<T>();
                     break;
@@ -812,7 +812,7 @@ namespace BingLibrary.Vision.Cameras
             return camera;
         }
 
-        #endregion
+        #endregion 相机创建和枚举方法
 
         #region 状态监控方法
 
@@ -922,7 +922,7 @@ namespace BingLibrary.Vision.Cameras
             });
         }
 
-        #endregion
+        #endregion 状态监控方法
 
         #region 配置管理方法
 
@@ -1028,7 +1028,7 @@ namespace BingLibrary.Vision.Cameras
             }
         }
 
-        #endregion
+        #endregion 配置管理方法
 
         #region 相机发现方法
 
@@ -1105,7 +1105,7 @@ namespace BingLibrary.Vision.Cameras
             }
         }
 
-        #endregion
+        #endregion 相机发现方法
 
         #region 健康检查方法
 
@@ -1286,7 +1286,6 @@ namespace BingLibrary.Vision.Cameras
             }
         }
 
-
-        #endregion
+        #endregion 健康检查方法
     }
 }

@@ -1,51 +1,48 @@
-﻿using BingLibrary.Vision.Cameras; 
-using HalconDotNet;
-using MvCameraControl;
-using MySqlX.XDevAPI.Common;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using MvCameraControl;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Navigation;
 
-namespace BingLibrary.Vision.NET.Cameras.Camera
+namespace BingLibrary.Vision.Cameras
 {
     public class HaiKangCameraNet<T> : BaseCamera<T>
     {
         public HaiKangCameraNet() : base()
         {
+        }
+
+        public static void SDKInitialize()
+        {
             SDKSystem.Initialize();
         }
 
+        public static void SDKFinalize()
+        {
+            SDKSystem.Finalize();
+        }
+
         #region param
-        readonly DeviceTLayerType enumTLayerType = DeviceTLayerType.MvGigEDevice | DeviceTLayerType.MvUsbDevice
+
+        private readonly DeviceTLayerType enumTLayerType = DeviceTLayerType.MvGigEDevice | DeviceTLayerType.MvUsbDevice
             | DeviceTLayerType.MvGenTLGigEDevice | DeviceTLayerType.MvGenTLCXPDevice | DeviceTLayerType.MvGenTLCameraLinkDevice | DeviceTLayerType.MvGenTLXoFDevice;
-         
-        IDevice _myCamera = null;
+
+        private IDevice _myCamera = null;
 
         private static Object BufForDriverLock = new Object();
         private Bitmap m_bitmap = null;
-        #endregion
+
+        #endregion param
 
         #region operate
 
         public override List<CameraInfo> GetListEnum(string manufacturerNameFilter = "")
         {
-
             GC.Collect();
             List<CameraInfo> cameraInfos = new List<CameraInfo>();
-            List<IDeviceInfo> deviceInfoList = GetListInfoEnum(); 
-             
+            List<IDeviceInfo> deviceInfoList = GetListInfoEnum();
+
             for (int i = 0; i < deviceInfoList.Count; i++)
             {
                 IDeviceInfo deviceInfo = deviceInfoList[i];
-
 
                 if (deviceInfo.TLayerType == DeviceTLayerType.MvGigEDevice)
                 {
@@ -77,17 +74,14 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
                         });
                     }
                 }
-               
-
             }
 
-             
             return cameraInfos;
         }
 
         public override bool InitDevice(CameraInfo cameraInfo)
         {
-            Info = cameraInfo; 
+            Info = cameraInfo;
             var infolist = GetListInfoEnum();
             IDeviceInfo camerainfo = null;
             if (infolist.Count < 1) return false;
@@ -99,8 +93,8 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
                 foreach (var item in infolist)
                 {
                     if (item.TLayerType == DeviceTLayerType.MvGigEDevice && cameraInfo.CameraType == CameraType.Gige)
-                    { 
-                             if (item.UserDefinedName.Equals(cameraInfo.CameraName))
+                    {
+                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
                         {
                             camerainfo = item;
                             selectSNflag = true;
@@ -109,7 +103,7 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
                     }
                     if (item.TLayerType == DeviceTLayerType.MvUsbDevice && cameraInfo.CameraType == CameraType.USB)
                     {
-                         if (item.UserDefinedName.Equals(cameraInfo.CameraName))
+                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
                         {
                             camerainfo = item;
                             selectSNflag = true;
@@ -124,7 +118,7 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
                 {
                     if (item.TLayerType == DeviceTLayerType.MvGigEDevice && cameraInfo.CameraType == CameraType.Gige)
                     {
-                         if (item.SerialNumber.Equals(cameraInfo.CameraSN))
+                        if (item.SerialNumber.Equals(cameraInfo.CameraSN))
                         {
                             camerainfo = item;
                             selectSNflag = true;
@@ -133,7 +127,7 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
                     }
                     if (item.TLayerType == DeviceTLayerType.MvUsbDevice && cameraInfo.CameraType == CameraType.USB)
                     {
-                          if (item.SerialNumber.Equals(cameraInfo.CameraName))
+                        if (item.SerialNumber.Equals(cameraInfo.CameraName))
                         {
                             camerainfo = item;
                             selectSNflag = true;
@@ -144,8 +138,6 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
             }
             if (!selectSNflag) return false;
 
-
-
             // ch:打开设备 | en:Open device
             if (null == _myCamera)
             {
@@ -153,15 +145,15 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
                 {
                     _myCamera = DeviceFactory.CreateDevice(camerainfo);
                 }
-                catch {
+                catch
+                {
                     return false;
                 }
-                
             }
 
-            int result = _myCamera.Open(); 
+            int result = _myCamera.Open();
             if (result != MvError.MV_OK)
-            { 
+            {
                 return false;
             }
 
@@ -173,7 +165,7 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
 
                 // ch:探测网络最佳包大小(只对GigE相机有效) | en:Detection network optimal package size(It only works for the GigE camera)
                 int optionPacketSize;
-                result = gigEDevice.GetOptimalPacketSize(out optionPacketSize); 
+                result = gigEDevice.GetOptimalPacketSize(out optionPacketSize);
             }
 
             //设置缓存节点数量
@@ -182,7 +174,6 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
             // ch:注册回调函数 | en:Register image callback
             _myCamera.StreamGrabber.FrameGrabedEvent += ImageCallback;
 
- 
             return true;
         }
 
@@ -190,7 +181,7 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
         {
             StopGrabbing();
             if (_myCamera != null)
-            { 
+            {
                 _myCamera.Close();
                 _myCamera.Dispose();
             }
@@ -199,17 +190,18 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
         public override bool SoftTrigger(T tData)
         {
             AddTriggerData(tData);
-           return _myCamera.Parameters.SetCommandValue("TriggerSoftware")== MvError.MV_OK;
-            
+            return _myCamera.Parameters.SetCommandValue("TriggerSoftware") == MvError.MV_OK;
         }
-        #endregion
+
+        #endregion operate
 
         #region SettingConfig
+
         public override bool LoadCamConfig(string filePath)
         {
             try
             {
-               int   nRet = _myCamera.Parameters.FeatureLoad(filePath); 
+                int nRet = _myCamera.Parameters.FeatureLoad(filePath);
                 if (MvError.MV_OK == nRet)
                     return true;
                 else
@@ -217,10 +209,10 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
             }
             catch { return false; }
         }
+
         protected override bool StartGrabbing() => _myCamera.StreamGrabber.StartGrabbing() == MvError.MV_OK;
 
         public override bool StopGrabbing() => _myCamera.StreamGrabber.StopGrabbing() == MvError.MV_OK;
-
 
         public override bool SetTriggerMode(TriggerMode mode, TriggerSource triggerEnum = TriggerSource.Line0)
         {
@@ -243,7 +235,7 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
             switch (triggerEnum)
             {
                 case TriggerSource.Software:
-                    rec = _myCamera.Parameters.SetEnumValueByString("TriggerSource", "Software"); 
+                    rec = _myCamera.Parameters.SetEnumValueByString("TriggerSource", "Software");
                     break;
 
                 case TriggerSource.Line0:
@@ -274,7 +266,7 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
         {
             mode = TriggerMode.On;
             hardTriggerModel = TriggerSource.Line0;
-          
+
             IEnumValue enumValue;
             int nRet = _myCamera.Parameters.GetEnumValue("TriggerMode", out enumValue);
             if (nRet == MvError.MV_OK)
@@ -282,11 +274,10 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
                 if (enumValue.CurEnumEntry.Symbolic == "On")
                 {
                     mode = TriggerMode.On;
-                   
                 }
                 else
                 {
-                    mode = TriggerMode.Off; 
+                    mode = TriggerMode.Off;
                 }
 
                 nRet = _myCamera.Parameters.GetEnumValue("TriggerSource", out enumValue);
@@ -314,23 +305,19 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
                     }
 
                     return true;
-
                 }
                 else
                 {
                     return false;
                 }
-                 
-
             }
             else
-            { 
+            {
                 return false;
             }
-          
         }
 
-        public override bool SetExpouseTime(ulong value) => _myCamera.Parameters.SetFloatValue("ExposureTime", (float)value)== MvError.MV_OK; 
+        public override bool SetExpouseTime(ulong value) => _myCamera.Parameters.SetFloatValue("ExposureTime", (float)value) == MvError.MV_OK;
 
         public override bool GetExpouseTime(out ulong value)
         {
@@ -341,7 +328,7 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
                 value = (ulong)floatValue.CurValue;
             }
             else
-                value = 0;  
+                value = 0;
             return MvError.MV_OK == nRet;
         }
 
@@ -360,11 +347,11 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
 
         //1下降沿 0 上升沿
         public override bool SetTriggerPolarity(TriggerPolarity polarity)
-            =>false;
+            => false;
 
         public override bool GetTriggerPolarity(out TriggerPolarity polarity)
         {
-            polarity =  TriggerPolarity.FallingEdge;
+            polarity = TriggerPolarity.FallingEdge;
             return false;
         }
 
@@ -384,7 +371,7 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
             return false;
         }
 
-        public override bool SetGain(float gain) => _myCamera.Parameters.SetFloatValue("Gain", gain)== MvError.MV_OK;
+        public override bool SetGain(float gain) => _myCamera.Parameters.SetFloatValue("Gain", gain) == MvError.MV_OK;
 
         public override bool GetGain(out float gain)
         {
@@ -407,14 +394,16 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
 
         public override bool GetLineStatus(IOLines line, out LineStatus linestatus)
         {
-            linestatus= LineStatus.Low;
+            linestatus = LineStatus.Low;
             return false;
         }
 
         public override bool AutoBalanceWhite() => false;
-        #endregion
+
+        #endregion SettingConfig
 
         #region helper
+
         private List<IDeviceInfo> GetListInfoEnum()
         {
             List<IDeviceInfo> deviceInfoList = new List<IDeviceInfo>();
@@ -423,8 +412,7 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
             {
                 return new List<IDeviceInfo>();
             }
-            return deviceInfoList;  
-           
+            return deviceInfoList;
         }
 
         private Bitmap ParseRawImageDatacallback(IFrameOut frameOut)
@@ -433,7 +421,7 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
             {
                 int width = (int)frameOut.Image.Width;
                 int height = (int)frameOut.Image.Height;
-                int stride = width; // 每行字节数等于宽度 // 假设像素格式是 GrayScale (Mono8) 
+                int stride = width; // 每行字节数等于宽度 // 假设像素格式是 GrayScale (Mono8)
                 if (frameOut.Image.PixelType == MvGvspPixelType.PixelType_Gvsp_RGB8_Packed)
                 {
                     stride = width * 3; // RGB 图像，每像素 3 字节
@@ -442,38 +430,34 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
                 {
                     stride = width; // 灰度图，每像素 1 字节
                 }
-                 
+
                 if (frameOut.Image.PixelType == MvGvspPixelType.PixelType_Gvsp_RGB8_Packed)
                 {
-                    m_bitmap = GetBmp(width, height, stride, frameOut.Image.PixelData, MvGvspPixelType.PixelType_Gvsp_RGB8_Packed); //转 bmp 
+                    m_bitmap = GetBmp(width, height, stride, frameOut.Image.PixelData, MvGvspPixelType.PixelType_Gvsp_RGB8_Packed); //转 bmp
                 }
                 else if (frameOut.Image.PixelType == MvGvspPixelType.PixelType_Gvsp_Mono8)
                 {
                     IntPtr pixelData = frameOut.Image.PixelDataPtr; // 托管指针
-                    int imageSize = (int)frameOut.Image.ImageSize; 
+                    int imageSize = (int)frameOut.Image.ImageSize;
                     // 将托管指针转换为字节数组
                     byte[] imageData = new byte[imageSize];
                     Marshal.Copy(pixelData, imageData, 0, imageSize);
 
-                    m_bitmap = GetBmp(width, height, stride, imageData, MvGvspPixelType.PixelType_Gvsp_Mono8); //转bmp 
-
-
+                    m_bitmap = GetBmp(width, height, stride, imageData, MvGvspPixelType.PixelType_Gvsp_Mono8); //转bmp
                 }
-
             }
             return m_bitmap;
         }
 
-
         private void ImageCallback(object sender, FrameGrabbedEventArgs e)
         {
-             var bitMap = ParseRawImageDatacallback(e.FrameOut);
+            var bitMap = ParseRawImageDatacallback(e.FrameOut);
             if (bitMap == null) return;
 
             ActionGetImage?.Invoke(bitMap.Clone() as Bitmap);
         }
 
-        public   Bitmap GetBmp(int width, int height, int stride, byte[] imageData, MvGvspPixelType pixelType)
+        public Bitmap GetBmp(int width, int height, int stride, byte[] imageData, MvGvspPixelType pixelType)
         {
             // 创建 Bitmap 对象
             Bitmap bitmap = null;
@@ -519,11 +503,6 @@ namespace BingLibrary.Vision.NET.Cameras.Camera
             return bitmap;
         }
 
-
-
-
-        #endregion
-
-
+        #endregion helper
     }
 }
