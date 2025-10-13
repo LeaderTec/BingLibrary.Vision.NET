@@ -120,7 +120,7 @@ namespace BingLibrary.Vision.Cameras
 
                 // 设置软触发模式并注册回调
                 bool result = false;
-                if (cameraInfoInput.TriggeSource == TriggerSource.Software)
+                if (cameraInfoInput.TriggerSource == TriggerSource.Software)
                 {
                     result = camera.StartWith_SoftTriggerModel(image =>
                     {
@@ -134,7 +134,7 @@ namespace BingLibrary.Vision.Cameras
                 else
                 {
                     //硬触发
-                    result = camera.StartWith_HardTriggerModel(cameraInfoInput.TriggeSource, async image =>
+                    result = camera.StartWith_HardTriggerModel(cameraInfoInput.TriggerSource, async image =>
                     {
                         if (camera.TryGetNextTriggerData(out T myTriggerData) && image != null)
                         {
@@ -232,9 +232,9 @@ namespace BingLibrary.Vision.Cameras
                     camera.SetExpouseTime((ulong)exposureTime);
                 });
                 camera.GetTriggerMode(out TriggerMode triggerMode, out TriggerSource triggerSource);
-                if (triggerMode == TriggerMode.Off || triggerSource != cameraInfoInput.TriggeSource)
+                if (triggerMode == TriggerMode.Off || triggerSource != cameraInfoInput.TriggerSource)
                 {
-                    if (cameraInfoInput.TriggeSource == TriggerSource.Software)
+                    if (cameraInfoInput.TriggerSource == TriggerSource.Software)
                     {
                         camera.StartWith_SoftTriggerModel(image =>
                         {
@@ -248,7 +248,7 @@ namespace BingLibrary.Vision.Cameras
                     else
                     {
                         //硬触发
-                        camera.StartWith_HardTriggerModel(cameraInfoInput.TriggeSource, async image =>
+                        camera.StartWith_HardTriggerModel(cameraInfoInput.TriggerSource, async image =>
                         {
                             if (image != null)
                             {

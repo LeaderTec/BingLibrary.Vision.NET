@@ -5,21 +5,22 @@ namespace BingLibrary.Vision.Cameras
 {
     public partial class CameraInfo : ObservableObject
     {
+
         public string CameraName { get; set; }
         [ObservableProperty]
-        public string _cameraSN; 
+        public string _cameraSN=""; 
         public string ManufacturerName { set; get; }
         public string CameraIP { get; set; }
         public CameraBrand CameraBrand { get; set; }
         public CameraType CameraType { get; set; }
 
         //public CameraStatus Status { get; set; }
-        //public TriggerSource TriggeSource { get; set; }
+        //public TriggerSource TriggerSource { get; set; }
 
         [ObservableProperty]
         private CameraStatus _status;
         [ObservableProperty]
-        private TriggerSource _triggeSource;
+        private TriggerSource _triggerSource;
 
         //相机用途类型
         /// <summary>
@@ -27,7 +28,7 @@ namespace BingLibrary.Vision.Cameras
         /// 这将决定在运行时如何初始化和使用该相机。
         /// </summary>
         [ObservableProperty]
-        private CameraUsageType _usage;
+        private CameraDeviceType _usage;
 
         // 线扫相机专用参数
         /// <summary>
@@ -42,30 +43,13 @@ namespace BingLibrary.Vision.Cameras
 
     }
 
-    /// <summary>
-    /// [新增] 定义相机用途的枚举
-    /// </summary>
-    public enum CameraUsageType
-    {
-        [Description("2D")]
-        TwoD,
-
-        [Description("3D")]
-        ThreeD,
-
-        [Description("线扫2D")]
-        LineScan2D,
-
-        [Description("线扫3D")]
-        LineScan3D,
-
-    }
+   
 
 
     public class CameraData : ObservableObject
     {
         public TriggerMode triggerMode { get; set; }
-        public TriggerSource triggeSource { get; set; }
+        public TriggerSource triggerSource { get; set; }
         public TriggerPolarity triggerPolarity { get; set; }
         public ulong ExpouseTime { get; set; }
         public ushort TriggerFilter { get; set; }
@@ -76,6 +60,6 @@ namespace BingLibrary.Vision.Cameras
     //一个辅助类，用于在XAML中绑定枚举值列表
     public static class CameraUsageTypeHelper
     {
-        public static Array CameraUsageTypeValues => Enum.GetValues(typeof(CameraUsageType));
+        public static Array CameraUsageTypeValues => Enum.GetValues(typeof(CameraDeviceType));
     }
 }

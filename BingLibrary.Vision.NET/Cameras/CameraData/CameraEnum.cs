@@ -8,6 +8,24 @@ namespace BingLibrary.Vision.Cameras
         USB,
         GENTL,
         Dirctory,
+        GigeLink,
+        CameraLink,
+        CoaXPress,
+        XofLink, 
+
+
+    }
+    
+
+    /// <summary>
+    /// 相机硬件类型
+    /// </summary>
+    public enum CameraDeviceType
+    {
+        TwoD,
+        ThreeD,
+        LineScan2D,
+        LineScan3D,
     }
 
     /// <summary>

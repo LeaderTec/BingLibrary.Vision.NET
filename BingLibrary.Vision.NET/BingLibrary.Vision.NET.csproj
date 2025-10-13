@@ -54,5 +54,8 @@
 		<Reference Include="MVSDK_Net">
 		  <HintPath>Cameras\CameraDlls\MVSDK_Net.dll</HintPath>
 		</Reference>
+		<Reference Include="MvCameraControl.Net">
+			<HintPath>Cameras\CameraDlls\MvCameraControl.Net.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 </Project>

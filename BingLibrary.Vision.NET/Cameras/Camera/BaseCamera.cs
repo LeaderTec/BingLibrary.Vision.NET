@@ -275,7 +275,7 @@ namespace BingLibrary.Vision.Cameras
         {
             if (config == null) return;
             SetExpouseTime(config.ExpouseTime);
-            SetTriggerMode(config.triggerMode, config.triggeSource);
+            SetTriggerMode(config.triggerMode, config.triggerSource);
             SetTriggerPolarity(config.triggerPolarity);
             SetTriggerFliter(config.TriggerFilter);
             SetGain(config.Gain);
@@ -294,7 +294,7 @@ namespace BingLibrary.Vision.Cameras
             config = new CameraData()
             {
                 triggerMode = triggerMode,
-                triggeSource = hardwareTriggerModel,
+                triggerSource = hardwareTriggerModel,
                 triggerPolarity = triggerPolarity,
                 TriggerFilter = triggerfilter,
                 TriggerDelay = triggerdelay,

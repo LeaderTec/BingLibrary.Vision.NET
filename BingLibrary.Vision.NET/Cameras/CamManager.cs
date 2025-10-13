@@ -134,7 +134,7 @@ namespace BingLibrary.Vision.Cameras
                     // --- 3D 相机处理逻辑 ---
                     bool result3D = false;
                     // 根据触发源选择软触发或硬触发模式
-                    if (cameraInfoInput.TriggeSource == TriggerSource.Software)
+                    if (cameraInfoInput.TriggerSource == TriggerSource.Software)
                     {
                         result3D = baseCamera.StartWith_SoftTriggerModel3D((depthImage, intensityImage) =>
                         {
@@ -171,7 +171,7 @@ namespace BingLibrary.Vision.Cameras
                 {
                     // --- 原有的 2D 相机处理逻辑 ---
                     bool result2D = false;
-                    if (cameraInfoInput.TriggeSource == TriggerSource.Software)
+                    if (cameraInfoInput.TriggerSource == TriggerSource.Software)
                     {
                         result2D = camera.StartWith_SoftTriggerModel(image =>
                         {
@@ -184,7 +184,7 @@ namespace BingLibrary.Vision.Cameras
                     }
                     else //硬触发
                     {
-                        result2D = camera.StartWith_HardTriggerModel(cameraInfoInput.TriggeSource, image =>
+                        result2D = camera.StartWith_HardTriggerModel(cameraInfoInput.TriggerSource, image =>
                         {
                             if (camera.TryGetNextTriggerData(out T myTriggerData) && image != null)
                             {
@@ -265,7 +265,7 @@ namespace BingLibrary.Vision.Cameras
         /// </summary>
         public async Task<bool> ExecuteTrigger(CameraInfo cameraInfoInput, T triggerData, int exposureTime = 10000, Action? onFinished = null)
         {
-            if(cameraInfoInput.TriggeSource == TriggerSource.Software)
+            if(cameraInfoInput.TriggerSource == TriggerSource.Software)
             {
                 return ExecuteSoftTrigger(cameraInfoInput, triggerData, exposureTime, onFinished);
             }
@@ -297,7 +297,7 @@ namespace BingLibrary.Vision.Cameras
                 //LineScanHardTriggerParameters<T> lineScanParams = new LineScanHardTriggerParameters<T>
                 //{
                 //    CameraSN = cameraInfoInput.CameraSN,
-                //    TriggerSource = cameraInfoInput.TriggeSource,
+                //    TriggerSource = cameraInfoInput.TriggerSource,
                 //    ScanCount = cameraInfoInput.ScanCount,
                 //    //ConfigFilePath = Directory.GetFiles(Path.Combine(ProjectPath, runProject.ProjectName), "*.mfs").FirstOrDefault(),
                 //    //ConfigFilePath = Directory.GetFiles(Path.Combine(_configurationService.ProjectRootPath, runProject.ProjectName), "*.mfs").FirstOrDefault(),
@@ -336,9 +336,9 @@ namespace BingLibrary.Vision.Cameras
 
                     // 检查并设置触发模式
                     baseCamera.GetTriggerMode(out TriggerMode triggerMode, out TriggerSource triggerSource);
-                    if (triggerMode == TriggerMode.Off || triggerSource != cameraInfoInput.TriggeSource)
+                    if (triggerMode == TriggerMode.Off || triggerSource != cameraInfoInput.TriggerSource)
                     {
-                        if (cameraInfoInput.TriggeSource == TriggerSource.Software)
+                        if (cameraInfoInput.TriggerSource == TriggerSource.Software)
                         {
                             baseCamera.StartWith_SoftTriggerModel3D((depth, intensity) => {
                                 if (depth != null) { OnSoftTrigger3DImageCaptured(cameraSN, depth, intensity, default); }
@@ -378,9 +378,9 @@ namespace BingLibrary.Vision.Cameras
 
                     // 检查并设置触发模式
                     camera.GetTriggerMode(out TriggerMode triggerMode, out TriggerSource triggerSource);
-                    if (triggerMode == TriggerMode.Off || triggerSource != cameraInfoInput.TriggeSource)
+                    if (triggerMode == TriggerMode.Off || triggerSource != cameraInfoInput.TriggerSource)
                     {
-                        if (cameraInfoInput.TriggeSource == TriggerSource.Software)
+                        if (cameraInfoInput.TriggerSource == TriggerSource.Software)
                         {
                             camera.StartWith_SoftTriggerModel(image =>
                             {
@@ -389,7 +389,7 @@ namespace BingLibrary.Vision.Cameras
                         }
                         else //硬触发
                         {
-                            camera.StartWith_HardTriggerModel(cameraInfoInput.TriggeSource, image =>
+                            camera.StartWith_HardTriggerModel(cameraInfoInput.TriggerSource, image =>
                             {
                                 if (image != null) { OnSoftTriggerImageCaptured(cameraSN, image, default); }
                             });
