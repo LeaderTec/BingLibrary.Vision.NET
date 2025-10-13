@@ -43,6 +43,8 @@ namespace BingLibrary.Vision.Cameras
     {
         [Description("海康相机")] HaiKang,
         [Description("海康相机3D")] HaiKang3D,
+        [Description("海康相机Net")] HaiKangNet,
+        [Description("海康相机采集卡Net")] HaiKangInterfaceNet, 
         [Description("大华相机")] DaHua,
         [Description("巴斯勒相机")] Basler,
         [Description("大恒相机")] DaHeng,

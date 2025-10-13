@@ -1,4 +1,5 @@
 ﻿using BingLibrary.Vision.Cameras;
+using BingLibrary.Vision.NET.Cameras.Camera;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -785,6 +786,12 @@ namespace BingLibrary.Vision.Cameras
                     break;
                 case CameraBrand.HaiKang3D:
                     camera = new HaiKangCamera3D<T>();
+                    break;
+                case CameraBrand.HaiKangNet:
+                    camera = new HaiKangCameraNet<T>();
+                    break;
+                case CameraBrand.HaiKangInterfaceNet:
+                    camera = new HaiKangCameraInterfaceNet<T>();
                     break;
                 case CameraBrand.DaHua:
                     camera = new DaHuaCamera<T>();

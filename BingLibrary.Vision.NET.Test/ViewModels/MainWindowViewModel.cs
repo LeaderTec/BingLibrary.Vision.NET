@@ -70,6 +70,8 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         {
             "海康相机",
             "海康相机3D",
+            "海康相机Net",
+            "海康相机采集卡Net",
             "大华相机",
             "巴斯勒相机",
             "大恒相机"
@@ -86,10 +88,12 @@ namespace BingLibrary.Vision.NET.Test.ViewModels
         private void GetCameraNames()
         {
             if (CameraBrandIndex == 0) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.HaiKang);
-            else if (CameraBrandIndex == 1) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.HaiKang3D); 
-            else if(CameraBrandIndex == 2) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.DaHua);
-            else if (CameraBrandIndex == 3) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.Basler);
-            else if (CameraBrandIndex == 4) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.DaHeng);
+            else if (CameraBrandIndex == 1) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.HaiKang3D);
+            else if (CameraBrandIndex == 2) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.HaiKangNet);
+            else if (CameraBrandIndex == 3) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.HaiKangInterfaceNet);
+            else if(CameraBrandIndex == 4) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.DaHua);
+            else if (CameraBrandIndex == 5) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.Basler);
+            else if (CameraBrandIndex == 6) camera = CamFactory<MyTriggerData>.CreateCamera(CameraBrand.DaHeng);
 
             CameraNames.Clear();
             currentCameraInfos = camera.GetListEnum();
