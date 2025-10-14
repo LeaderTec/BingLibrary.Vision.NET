@@ -24,7 +24,15 @@ namespace BingLibrary.Vision.Cameras
         private Bitmap m_bitmap = null;
 
         #endregion param
+        public override void SDKInitialize()
+        {
 
+        }
+
+        public override void SDKFinalize()
+        {
+
+        }
         #region operate
 
         public override List<CameraInfo> GetListEnum(string manufacturerNameFilter = "")

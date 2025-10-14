@@ -12,6 +12,15 @@ namespace BingLibrary.Vision.Cameras
         public DaHengCamera() : base()
         {
         }
+        public override void SDKInitialize()
+        {
+
+        }
+
+        public override void SDKFinalize()
+        {
+
+        }
 
         #region param
 

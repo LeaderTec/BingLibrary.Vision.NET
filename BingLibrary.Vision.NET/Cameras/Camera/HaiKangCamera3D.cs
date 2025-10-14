@@ -33,7 +33,15 @@ namespace BingLibrary.Vision.Cameras
         private ImageDataCallBackHandle<T> pImageDataCallBack ;
         #endregion param
 
+        public override void SDKInitialize()
+        {
 
+        }
+
+        public override void SDKFinalize()
+        {
+
+        }
         #region operate
         public async Task<(HImage, HImage)> Grabe3DImages(int timeout = 25000, int internalTime = 20)
         {

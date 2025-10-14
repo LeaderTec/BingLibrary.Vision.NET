@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using MvCameraControl;
+using System.Collections.Concurrent;
 
 namespace BingLibrary.Vision.Cameras
 {
@@ -11,6 +12,9 @@ namespace BingLibrary.Vision.Cameras
         public bool TryGetNextTriggerData(out T result);
 
         public void AddTriggerData(T data);
+
+        public void SDKInitialize();
+        public void SDKFinalize();
 
         /// <summary>
         /// 获取相机SN枚举

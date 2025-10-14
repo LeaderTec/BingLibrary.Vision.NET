@@ -235,7 +235,15 @@ namespace BingLibrary.Vision.Cameras
             AddTriggerData(tData);
             return _myCamera.MV_CC_SetCommandValue_NET("TriggerSoftware") == HKCameraCtrl.MV_OK;
         }
+        public override void SDKInitialize()
+        {
 
+        }
+
+        public override void SDKFinalize()
+        {
+
+        }
         #endregion operate
 
         #region SettingConfig

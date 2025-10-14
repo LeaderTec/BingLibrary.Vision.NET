@@ -1,4 +1,4 @@
-﻿using Basler.Pylon;
+﻿using Basler.Pylon; 
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
@@ -23,6 +23,15 @@ namespace BingLibrary.Vision.Cameras
 
         public BaslerCamera() : base()
         {
+        }
+        public override void SDKInitialize()
+        {
+          
+        }
+
+        public override void SDKFinalize()
+        {
+           
         }
 
         #region Opr

@@ -1,4 +1,5 @@
 ﻿using HalconDotNet;
+using MvCameraControl;
 using MySqlX.XDevAPI.Common;
 using System.Collections.Concurrent;
 
@@ -70,6 +71,8 @@ namespace BingLibrary.Vision.Cameras
         #endregion Parm
 
         #region operate
+        public abstract void SDKInitialize();
+        public abstract void SDKFinalize();
 
         public abstract void CloseDevice();
 

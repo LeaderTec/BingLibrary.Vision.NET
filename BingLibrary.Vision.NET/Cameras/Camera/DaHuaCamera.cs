@@ -13,7 +13,15 @@ namespace BingLibrary.Vision.Cameras
         public DaHuaCamera() : base()
         {
         }
+        public override void SDKInitialize()
+        {
 
+        }
+
+        public override void SDKFinalize()
+        {
+
+        }
         #region param
 
         private Bitmap m_bitmap = null;

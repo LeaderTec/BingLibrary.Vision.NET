@@ -10,12 +10,12 @@ namespace BingLibrary.Vision.Cameras
         {
         }
 
-        public static void SDKInitialize()
+        public override void SDKInitialize()
         {
             SDKSystem.Initialize();
         }
 
-        public static void SDKFinalize()
+        public override void SDKFinalize()
         {
             SDKSystem.Finalize();
         }
