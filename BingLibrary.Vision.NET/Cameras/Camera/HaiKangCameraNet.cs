@@ -22,7 +22,8 @@ namespace BingLibrary.Vision.Cameras
 
         #region param
 
-        private readonly DeviceTLayerType enumTLayerType = DeviceTLayerType.MvGigEDevice | DeviceTLayerType.MvUsbDevice
+        private readonly DeviceTLayerType enumTLayerType = 
+            DeviceTLayerType.MvGigEDevice | DeviceTLayerType.MvUsbDevice
             | DeviceTLayerType.MvGenTLGigEDevice | DeviceTLayerType.MvGenTLCXPDevice | DeviceTLayerType.MvGenTLCameraLinkDevice | DeviceTLayerType.MvGenTLXoFDevice;
 
         private IDevice _myCamera = null;
@@ -87,32 +88,7 @@ namespace BingLibrary.Vision.Cameras
             if (infolist.Count < 1) return false;
 
             bool selectSNflag = false;
-
-            if (!string.IsNullOrEmpty(cameraInfo.CameraName))
-            {
-                foreach (var item in infolist)
-                {
-                    if (item.TLayerType == DeviceTLayerType.MvGigEDevice && cameraInfo.CameraType == CameraType.Gige)
-                    {
-                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
-                        {
-                            camerainfo = item;
-                            selectSNflag = true;
-                            break;
-                        }
-                    }
-                    if (item.TLayerType == DeviceTLayerType.MvUsbDevice && cameraInfo.CameraType == CameraType.USB)
-                    {
-                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
-                        {
-                            camerainfo = item;
-                            selectSNflag = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            else if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
+               if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
             {
                 foreach (var item in infolist)
                 {
@@ -135,8 +111,32 @@ namespace BingLibrary.Vision.Cameras
                         }
                     }
                 }
+            } 
+            else if (!string.IsNullOrEmpty(cameraInfo.CameraName))
+            {
+                foreach (var item in infolist)
+                {
+                    if (item.TLayerType == DeviceTLayerType.MvGigEDevice && cameraInfo.CameraType == CameraType.Gige)
+                    {
+                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
+                    }
+                    if (item.TLayerType == DeviceTLayerType.MvUsbDevice && cameraInfo.CameraType == CameraType.USB)
+                    {
+                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
+                    }
+                }
             }
-            if (!selectSNflag) return false;
+             if (!selectSNflag) return false;
 
             // ch:打开设备 | en:Open device
             if (null == _myCamera)

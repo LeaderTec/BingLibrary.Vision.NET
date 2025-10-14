@@ -80,50 +80,7 @@ namespace BingLibrary.Vision.Cameras
             if (infolist.Count < 1) return false;
 
             bool selectSNflag = false;
-
-            if (!string.IsNullOrEmpty(cameraInfo.CameraName))
-            {
-                foreach (var item in infolist)
-                {
-                    if (cameraInfo.CameraType == CameraType.GigeLink)
-                    {
-                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
-                        {
-                            camerainfo = item;
-                            selectSNflag = true;
-                            break;
-                        }
-                    }
-                    if (cameraInfo.CameraType == CameraType.CameraLink)
-                    {
-                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
-                        {
-                            camerainfo = item;
-                            selectSNflag = true;
-                            break;
-                        }
-                    }
-                    if (cameraInfo.CameraType == CameraType.CoaXPress)
-                    {
-                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
-                        {
-                            camerainfo = item;
-                            selectSNflag = true;
-                            break;
-                        }
-                    }
-                    if (cameraInfo.CameraType == CameraType.XofLink)
-                    {
-                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
-                        {
-                            camerainfo = item;
-                            selectSNflag = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            else if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
+                if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
             {
                 foreach (var item in infolist)
                 {
@@ -165,6 +122,49 @@ namespace BingLibrary.Vision.Cameras
                     }
                 }
             }
+            else if (!string.IsNullOrEmpty(cameraInfo.CameraName))
+            {
+                foreach (var item in infolist)
+                {
+                    if (cameraInfo.CameraType == CameraType.GigeLink)
+                    {
+                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
+                    }
+                    if (cameraInfo.CameraType == CameraType.CameraLink)
+                    {
+                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
+                    }
+                    if (cameraInfo.CameraType == CameraType.CoaXPress)
+                    {
+                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
+                    }
+                    if (cameraInfo.CameraType == CameraType.XofLink)
+                    {
+                        if (item.UserDefinedName.Equals(cameraInfo.CameraName))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
+                    }
+                }
+            }
+         
             if (!selectSNflag) return false;
 
             // ch:打开设备 | en:Open device

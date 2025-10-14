@@ -89,8 +89,33 @@ namespace BingLibrary.Vision.Cameras
             if (infolist.Count < 1) return false;
 
             bool selectSNflag = false;
-
-            if (!string.IsNullOrEmpty(cameraInfo.CameraName))
+             if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
+            {
+                foreach (var item in infolist)
+                {
+                    if (item.nTLayerType == HKCameraCtrl.MV_GIGE_DEVICE && cameraInfo.CameraType == CameraType.Gige)
+                    {
+                        HKCameraCtrl.MV_GIGE_DEVICE_INFO gigeInfo = (HKCameraCtrl.MV_GIGE_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stGigEInfo, typeof(HKCameraCtrl.MV_GIGE_DEVICE_INFO));
+                        if (gigeInfo.chSerialNumber.Equals(cameraInfo.CameraSN))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
+                    }
+                    if (item.nTLayerType == HKCameraCtrl.MV_USB_DEVICE && cameraInfo.CameraType == CameraType.USB)
+                    {
+                        HKCameraCtrl.MV_USB3_DEVICE_INFO usbInfo = (HKCameraCtrl.MV_USB3_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stUsb3VInfo, typeof(HKCameraCtrl.MV_USB3_DEVICE_INFO));
+                        if (usbInfo.chSerialNumber.Equals(cameraInfo.CameraSN))
+                        {
+                            camerainfo = item;
+                            selectSNflag = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(cameraInfo.CameraName))
             {
                 foreach (var item in infolist)
                 {
@@ -116,32 +141,7 @@ namespace BingLibrary.Vision.Cameras
                     }
                 }
             }
-            else if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
-            {
-                foreach (var item in infolist)
-                {
-                    if (item.nTLayerType == HKCameraCtrl.MV_GIGE_DEVICE && cameraInfo.CameraType == CameraType.Gige)
-                    {
-                        HKCameraCtrl.MV_GIGE_DEVICE_INFO gigeInfo = (HKCameraCtrl.MV_GIGE_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stGigEInfo, typeof(HKCameraCtrl.MV_GIGE_DEVICE_INFO));
-                        if (gigeInfo.chSerialNumber.Equals(cameraInfo.CameraSN))
-                        {
-                            camerainfo = item;
-                            selectSNflag = true;
-                            break;
-                        }
-                    }
-                    if (item.nTLayerType == HKCameraCtrl.MV_USB_DEVICE && cameraInfo.CameraType == CameraType.USB)
-                    {
-                        HKCameraCtrl.MV_USB3_DEVICE_INFO usbInfo = (HKCameraCtrl.MV_USB3_DEVICE_INFO)HKCameraCtrl.ByteToStruct(item.SpecialInfo.stUsb3VInfo, typeof(HKCameraCtrl.MV_USB3_DEVICE_INFO));
-                        if (usbInfo.chSerialNumber.Equals(cameraInfo.CameraName))
-                        {
-                            camerainfo = item;
-                            selectSNflag = true;
-                            break;
-                        }
-                    }
-                }
-            }
+            
             if (!selectSNflag) return false;
 
             // ch:打开设备 | en:Open device

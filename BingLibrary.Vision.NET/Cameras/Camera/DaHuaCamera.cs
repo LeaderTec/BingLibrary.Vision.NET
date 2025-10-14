@@ -95,29 +95,7 @@ namespace BingLibrary.Vision.Cameras
             int res = MyCamera.IMV_EnumDevices(ref deviceList, (uint)interfaceTp);
 
             bool selectSNflag = false;
-
-            if (!string.IsNullOrEmpty(cameraInfo.CameraName))
-            {
-                for (int i = 0; i < deviceList.nDevNum; i++)
-                {
-                    IMVDefine.IMV_DeviceInfo item =
-                        (IMVDefine.IMV_DeviceInfo)
-                            Marshal.PtrToStructure(
-                                deviceList.pDevInfo + Marshal.SizeOf(typeof(IMVDefine.IMV_DeviceInfo)) * i,
-                                typeof(IMVDefine.IMV_DeviceInfo));
-
-                    if (item.cameraName.Equals(cameraInfo.CameraName))
-                    {
-                        // 创建设备句柄
-                        // Create Device Handle
-                        res = cam.IMV_CreateHandle(IMVDefine.IMV_ECreateHandleMode.modeByDeviceUserID, 0, cameraInfo.CameraName);
-
-                        selectSNflag = true;
-                        break;
-                    }
-                }
-            }
-            else if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
+               if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
             {
                 for (int i = 0; i < deviceList.nDevNum; i++)
                 {
@@ -138,7 +116,29 @@ namespace BingLibrary.Vision.Cameras
                     }
                 }
             }
-            if (!selectSNflag) return false;
+
+            else if (!string.IsNullOrEmpty(cameraInfo.CameraName))
+            {
+                for (int i = 0; i < deviceList.nDevNum; i++)
+                {
+                    IMVDefine.IMV_DeviceInfo item =
+                        (IMVDefine.IMV_DeviceInfo)
+                            Marshal.PtrToStructure(
+                                deviceList.pDevInfo + Marshal.SizeOf(typeof(IMVDefine.IMV_DeviceInfo)) * i,
+                                typeof(IMVDefine.IMV_DeviceInfo));
+
+                    if (item.cameraName.Equals(cameraInfo.CameraName))
+                    {
+                        // 创建设备句柄
+                        // Create Device Handle
+                        res = cam.IMV_CreateHandle(IMVDefine.IMV_ECreateHandleMode.modeByDeviceUserID, 0, cameraInfo.CameraName);
+
+                        selectSNflag = true;
+                        break;
+                    }
+                }
+            }
+             if (!selectSNflag) return false;
 
             // 打开设备
             // open device

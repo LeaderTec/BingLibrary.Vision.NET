@@ -83,20 +83,7 @@ namespace BingLibrary.Vision.Cameras
             if (listCameraInfo.Count < 1) return false;
 
             bool selectSNflag = false;
-
-            if (!string.IsNullOrEmpty(cameraInfo.CameraName))
-            {
-                foreach (var item in listCameraInfo)
-                {
-                    if (item.GetUserID().Equals(cameraInfo.CameraName))
-                    {
-                        GXDeviceInfo = item;
-                        selectSNflag = true;
-                        break;
-                    }
-                }
-            }
-            else if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
+              if (!string.IsNullOrEmpty(cameraInfo.CameraSN))
             {
                 foreach (var item in listCameraInfo)
                 {
@@ -108,6 +95,19 @@ namespace BingLibrary.Vision.Cameras
                     }
                 }
             }
+            else if (!string.IsNullOrEmpty(cameraInfo.CameraName))
+            {
+                foreach (var item in listCameraInfo)
+                {
+                    if (item.GetUserID().Equals(cameraInfo.CameraName))
+                    {
+                        GXDeviceInfo = item;
+                        selectSNflag = true;
+                        break;
+                    }
+                }
+            }
+           
 
             if (!selectSNflag) return false;
 
