@@ -474,7 +474,7 @@ namespace BingLibrary.Vision.Cameras
                         realImageOriginal = new HImage();
                         realImageOriginal.GenImage1("real", _nWidth, _nHeight, pData);
                         realImageFinal = realImageOriginal.RotateImage(90.0, "constant");
-                        realImageFinal?.Dispose();
+                        realImageOriginal?.Dispose();
 
                     }
                     finally
