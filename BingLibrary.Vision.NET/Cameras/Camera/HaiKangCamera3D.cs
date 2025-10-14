@@ -332,9 +332,100 @@ namespace BingLibrary.Vision.Cameras
             _haiKangCamera3D= haiKangCamera3D;
         }
 
+        //public override void run(MV3D_LP_IMAGE_DATA pstImageData)
+        //{
+        //    lock (LockObjects.Grab3DLockObject)
+        //    {
+        //        try
+        //        {
+        //            realImageOriginal?.Dispose();
+        //            realImageFinal?.Dispose();
+        //            lightImageOriginal?.Dispose();
+        //            lightImageFinal?.Dispose();
+
+        //            m_hImageLoaded = false;
+        //            Monitor.Enter(Lock);
+        //            var _nWidth = (int)pstImageData.nWidth;
+        //            var _nHeight = (int)pstImageData.nHeight;
+        //            var _nDataLen = pstImageData.nDataLen;
+        //            var _nFrameNum = pstImageData.nFrameNum;
+
+
+
+        //            if (m_MaxImageSize < (int)pstImageData.nDataLen)
+        //            {
+        //                m_pcDataBuf = new byte[pstImageData.nDataLen];
+        //                m_pcDataBufLight = new byte[pstImageData.nDataLen];
+        //                m_MaxImageSize = pstImageData.nDataLen;
+
+        //            }
+
+        //            MV3D_LP_IMAGE_DATA Rece = pstImageData;
+                   
+
+        //            Parallel.Invoke(
+        //                () => {
+
+        //                    Marshal.Copy(pstImageData.pData, m_pcDataBuf, 0, (int)pstImageData.nDataLen);  //获取深度图
+        //                },
+        //                 () => {
+        //                     System.Threading.Thread.Sleep(30);
+        //                     Marshal.Copy(Rece.pIntensityData, m_pcDataBufLight, 0, (int)Rece.nIntensityDataLen); //获取亮度图
+        //                 }
+        //                );
+
+        //            Monitor.Exit(Lock);
+
+        //            float[] buff1 = new float[(int)pstImageData.nDataLen / 2];
+        //            //  double[] buffLight = new double[(int)pstImageData.nIntensityDataLen];
+        //            ////深度图
+        //            //for (int i = 0; i < buff1.Length; i++)
+        //            //{
+        //            //    //3D相机的高度的范围为-2500到+2500  --这句话加2500就是表示高度范围变成0到5000
+        //            //    int value = (Convert.ToInt16($"{m_pcDataBuf[i * 2 + 1]:X2}{m_pcDataBuf[i * 2]:X2}", 16) + 2500);
+        //            //    if (value < 0) value = 0;
+        //            //    buff1[i] = value * 0.01;    //10倍软件上固定的，/1000是换算成毫米
+        //            //}
+
+        //            //深度图
+        //            for (int i = 0; i < buff1.Length; i++)
+        //            {
+        //                short rawValue = (short)((m_pcDataBuf[i * 2 + 1] << 8) | m_pcDataBuf[i * 2]);
+        //                int value = rawValue + 2500 * 2;
+        //                if (value < 0) value = 0;
+        //                buff1[i] = value * 0.01F * 0.58F;    //10倍软件上固定的，/1000是换算成毫米
+        //            }
+                     
+        //            IntPtr pData = Marshal.UnsafeAddrOfPinnedArrayElement(buff1, 0);
+        //            realImageOriginal = new HImage();
+        //            realImageOriginal.GenImage1("real", _nWidth, _nHeight, pData); 
+        //            realImageFinal = realImageOriginal.RotateImage(90.0, "constant");
+                   
+        //            //亮度图
+        //            GCHandle hBuf = GCHandle.Alloc(m_pcDataBufLight, GCHandleType.Pinned);
+        //            IntPtr ptr = hBuf.AddrOfPinnedObject();
+        //            lightImageOriginal = new HImage();
+        //            lightImageOriginal.GenImage1("byte",(int) Rece.nWidth, (int)Rece.nHeight, ptr);
+        //            lightImageFinal= lightImageOriginal.RotateImage(90.0, "constant");
+
+
+        //            _haiKangCamera3D.ActionGet3DImages?.Invoke(new HImage( realImageFinal),new HImage( lightImageFinal)); //回调函数，传递图像数据
+        //            //?.Invoke(bitMap.Clone() as Bitmap);
+
+        //            m_hImageLoaded = true;
+        //        }
+        //        catch (Exception ex)
+        //        {
+                    
+        //        }
+        //    }
+
+        //}
+
         public override void run(MV3D_LP_IMAGE_DATA pstImageData)
         {
-            lock (LockObjects.Grab3DLockObject)
+            // 只保留一个锁，假设 Lock 是你真正需要同步的对象
+            lock (LockObjects.Grab3DLockObject) // 替代 Monitor.Enter/Exit
             {
                 try
                 {
@@ -344,87 +435,89 @@ namespace BingLibrary.Vision.Cameras
                     lightImageFinal?.Dispose();
 
                     m_hImageLoaded = false;
-                    Monitor.Enter(Lock);
+
                     var _nWidth = (int)pstImageData.nWidth;
                     var _nHeight = (int)pstImageData.nHeight;
                     var _nDataLen = pstImageData.nDataLen;
-                    var _nFrameNum = pstImageData.nFrameNum;
 
-
-
-                    if (m_MaxImageSize < (int)pstImageData.nDataLen)
+                    if (m_MaxImageSize < _nDataLen)
                     {
-                        m_pcDataBuf = new byte[pstImageData.nDataLen];
-                        m_pcDataBufLight = new byte[pstImageData.nDataLen];
-                        m_MaxImageSize = pstImageData.nDataLen;
-
+                        m_pcDataBuf = new byte[_nDataLen];
+                        m_pcDataBufLight = new byte[_nDataLen];
+                        m_MaxImageSize = _nDataLen;
                     }
 
-                    MV3D_LP_IMAGE_DATA Rece = pstImageData;
-                   
+                    Marshal.Copy(pstImageData.pData, m_pcDataBuf, 0, (int)_nDataLen);
+                    Marshal.Copy(pstImageData.pIntensityData, m_pcDataBufLight, 0, (int)pstImageData.nIntensityDataLen);
 
-                    Parallel.Invoke(
-                        () => {
+                    //// 并行拷贝（无需 Sleep）
+                    //Parallel.Invoke(
+                    //    () => Marshal.Copy(pstImageData.pData, m_pcDataBuf, 0, (int)_nDataLen),
+                    //    () => Marshal.Copy(pstImageData.pIntensityData, m_pcDataBufLight, 0, (int)pstImageData.nIntensityDataLen)
+                    //);
 
-                            Marshal.Copy(pstImageData.pData, m_pcDataBuf, 0, (int)pstImageData.nDataLen);  //获取深度图
-                        },
-                         () => {
-                             System.Threading.Thread.Sleep(30);
-                             Marshal.Copy(Rece.pIntensityData, m_pcDataBufLight, 0, (int)Rece.nIntensityDataLen); //获取亮度图
-                         }
-                        );
-
-                    Monitor.Exit(Lock);
-
-                    float[] buff1 = new float[(int)pstImageData.nDataLen / 2];
-                    //  double[] buffLight = new double[(int)pstImageData.nIntensityDataLen];
-                    ////深度图
-                    //for (int i = 0; i < buff1.Length; i++)
-                    //{
-                    //    //3D相机的高度的范围为-2500到+2500  --这句话加2500就是表示高度范围变成0到5000
-                    //    int value = (Convert.ToInt16($"{m_pcDataBuf[i * 2 + 1]:X2}{m_pcDataBuf[i * 2]:X2}", 16) + 2500);
-                    //    if (value < 0) value = 0;
-                    //    buff1[i] = value * 0.01;    //10倍软件上固定的，/1000是换算成毫米
-                    //}
-
-                    //深度图
+                    // 处理深度图
+                    float[] buff1 = new float[_nDataLen / 2];
                     for (int i = 0; i < buff1.Length; i++)
                     {
                         short rawValue = (short)((m_pcDataBuf[i * 2 + 1] << 8) | m_pcDataBuf[i * 2]);
                         int value = rawValue + 2500 * 2;
                         if (value < 0) value = 0;
-                        buff1[i] = value * 0.01F * 0.58F;    //10倍软件上固定的，/1000是换算成毫米
+                        buff1[i] = value * 0.01f * 0.58f;
                     }
-                     
-                    IntPtr pData = Marshal.UnsafeAddrOfPinnedArrayElement(buff1, 0);
-                    realImageOriginal = new HImage();
-                    realImageOriginal.GenImage1("real", _nWidth, _nHeight, pData); 
-                    realImageFinal = realImageOriginal.RotateImage(90.0, "constant");
-                   
-                    //亮度图
+
+
+                    GCHandle hDepth = GCHandle.Alloc(buff1, GCHandleType.Pinned);
+                    try
+                    {
+                        IntPtr pData = hDepth.AddrOfPinnedObject();
+                        realImageOriginal = new HImage();
+                        realImageOriginal.GenImage1("real", _nWidth, _nHeight, pData);
+                        realImageFinal = realImageOriginal.RotateImage(90.0, "constant");
+                        realImageFinal?.Dispose();
+
+                    }
+                    finally
+                    {
+                        hDepth.Free();
+                    }
+
+
+                    //IntPtr pData = Marshal.UnsafeAddrOfPinnedArrayElement(buff1, 0);
+                    //realImageOriginal = new HImage();
+                    //realImageOriginal.GenImage1("real", _nWidth, _nHeight, pData);
+                    //realImageFinal = realImageOriginal.RotateImage(90.0, "constant");
+
+                    // 处理亮度图（注意 GCHandle 释放）
                     GCHandle hBuf = GCHandle.Alloc(m_pcDataBufLight, GCHandleType.Pinned);
-                    IntPtr ptr = hBuf.AddrOfPinnedObject();
-                    lightImageOriginal = new HImage();
-                    lightImageOriginal.GenImage1("byte",(int) Rece.nWidth, (int)Rece.nHeight, ptr);
-                    lightImageFinal= lightImageOriginal.RotateImage(90.0, "constant");
+                    try
+                    {
+                        IntPtr ptr = hBuf.AddrOfPinnedObject();
+                        lightImageOriginal = new HImage();
+                        lightImageOriginal.GenImage1("byte", _nWidth, _nHeight, ptr);
+                        lightImageFinal = lightImageOriginal.RotateImage(90.0, "constant");
+                        lightImageOriginal?.Dispose();
+                    }
+                    finally
+                    {
+                        hBuf.Free();
+                    }
 
-
-                    _haiKangCamera3D.ActionGet3DImages?.Invoke(new HImage( realImageFinal),new HImage( lightImageFinal)); //回调函数，传递图像数据
-                    //?.Invoke(bitMap.Clone() as Bitmap);
-
+                    _haiKangCamera3D.ActionGet3DImages?.Invoke(new HImage(realImageFinal), new HImage(lightImageFinal));
                     m_hImageLoaded = true;
                 }
                 catch (Exception ex)
                 {
-                    
+                    // 记录日志！
+                    System.Diagnostics.Debug.WriteLine($"Error in run: {ex}");
+                    // 或使用你的日志系统
                 }
             }
-
         }
 
-
-         
     }
+
+  
 
     internal enum Mv3dLpImageMode
     {
