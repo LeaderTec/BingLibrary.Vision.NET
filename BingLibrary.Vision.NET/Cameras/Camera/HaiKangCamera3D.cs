@@ -134,19 +134,17 @@ namespace BingLibrary.Vision.Cameras
                   
                     return false;
                 }
-
+                   
                 //设置深度图模式 
                 MV3D_LP_PARAM devParam = new MV3D_LP_PARAM();
                 MV3D_LP_ENUMPARAM enumParam = new MV3D_LP_ENUMPARAM();
+                enumParam.nCurValue = (uint)Mv3dLpImageMode.MV3D_LP_Range_Image; 
                 devParam.set_enumparam(enumParam);
-                nRet = Mv3dLpSDK.MV3D_LP_GetParam(m_DevHandle, "ImageMode", devParam);
+                nRet = Mv3dLpSDK.MV3D_LP_SetParam(m_DevHandle, "ImageMode", devParam);
                 if ((int)Mv3dLpSDK.MV3D_LP_OK != nRet)
                 { 
                     return false;
-                }
-                enumParam = devParam.get_enumparam();
-                uint nImgMode = (uint)enumParam.nCurValue;
-                m_nImgMode = Mv3dLpImageMode.MV3D_LP_Range_Image;
+                } 
                 pImageDataCallBack.Register(m_DevHandle); //注册了一个回调函数
                  
 
