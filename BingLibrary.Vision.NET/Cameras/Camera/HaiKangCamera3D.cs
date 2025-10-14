@@ -35,12 +35,12 @@ namespace BingLibrary.Vision.Cameras
 
         public override void SDKInitialize()
         {
-
+            Mv3dLpSDK.MV3D_LP_Initialize();
         }
 
         public override void SDKFinalize()
         {
-
+            Mv3dLpSDK.MV3D_LP_Finalize();
         }
         #region operate
         public async Task<(HImage, HImage)> Grabe3DImages(int timeout = 25000, int internalTime = 20)
