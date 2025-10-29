@@ -3,6 +3,12 @@ using System.ComponentModel;
 
 namespace BingLibrary.Vision.Cameras
 {
+
+    public abstract class BaseTriggerData
+        {
+            public int TriggerId { get; set; }
+            public string TriggerGuid { get; set; }
+         }
     public partial class CameraInfo : ObservableObject
     {
 

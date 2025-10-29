@@ -22,7 +22,7 @@ using BingLibraryLite.Tools;
 
 namespace BingLibrary.Vision.NET.Test.ViewModels
 {
-    public class MyTriggerData
+    public class MyTriggerData: BaseTriggerData
     {
         public int Id { get; set; }
         public string Name { get; set; }

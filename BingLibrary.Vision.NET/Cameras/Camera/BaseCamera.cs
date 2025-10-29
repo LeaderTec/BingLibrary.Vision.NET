@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 
 namespace BingLibrary.Vision.Cameras
 {
-    public abstract class BaseCamera<T> : ICamera<T>
+    public abstract class BaseCamera<T> : ICamera<T> where T : BaseTriggerData
     {
         protected BaseCamera()
         { 
@@ -28,7 +28,7 @@ namespace BingLibrary.Vision.Cameras
         // 添加触发数据（线程安全入队）
         public void AddTriggerData(T data)
         {
-            if (data != null)
+            if (data != null) 
                 _pendingTriggerData.Enqueue(data);
         }
 
