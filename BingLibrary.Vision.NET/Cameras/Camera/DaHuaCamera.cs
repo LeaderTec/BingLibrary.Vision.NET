@@ -79,7 +79,7 @@ namespace BingLibrary.Vision.Cameras
                         cameraInfos.Add(new CameraInfo()
                         {
                             CameraName = deviceInfo.cameraName,
-                            CameraSN = deviceInfo.serialNumber,
+                            CameraSN = deviceInfo.cameraKey,
                             CameraBrand = CameraBrand.DaHua,
                             ManufacturerName = deviceInfo.vendorName,
                             CameraType =
