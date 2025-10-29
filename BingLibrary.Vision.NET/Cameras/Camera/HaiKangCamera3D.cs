@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using STC_DataSet = System.IntPtr;
 namespace BingLibrary.Vision.Cameras
 {
-    public class HaiKangCamera3D<T> : BaseCamera<T>
+    public class HaiKangCamera3D<T> : BaseCamera<T> where T : BaseTriggerData
     {
         public HaiKangCamera3D() : base()
         {

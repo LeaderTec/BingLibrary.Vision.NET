@@ -7,7 +7,7 @@ using System.IO;
 
 namespace BingLibrary.Vision.Cameras
 {
-    public class DaHengCamera<T> : BaseCamera<T>
+    public class DaHengCamera<T> : BaseCamera<T> where T : BaseTriggerData
     {
         public DaHengCamera() : base()
         {

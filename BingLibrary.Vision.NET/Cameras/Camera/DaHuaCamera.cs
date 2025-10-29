@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace BingLibrary.Vision.Cameras
 {
-    public class DaHuaCamera<T> : BaseCamera<T>
+    public class DaHuaCamera<T> : BaseCamera<T> where T : BaseTriggerData
     {
         public DaHuaCamera() : base()
         {

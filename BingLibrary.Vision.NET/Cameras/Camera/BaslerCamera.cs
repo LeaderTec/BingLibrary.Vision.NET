@@ -6,7 +6,7 @@ using System.Windows.Navigation;
 
 namespace BingLibrary.Vision.Cameras
 {
-    public class BaslerCamera<T> : BaseCamera<T>
+    public class BaslerCamera<T> : BaseCamera<T> where T : BaseTriggerData
     {
         #region Parm
 

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace BingLibrary.Vision.Cameras
 {
-    public class HaiKangCameraNet<T> : BaseCamera<T>
+    public class HaiKangCameraNet<T> : BaseCamera<T> where T : BaseTriggerData
     {
         public HaiKangCameraNet() : base()
         {

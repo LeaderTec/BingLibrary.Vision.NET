@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace BingLibrary.Vision.Cameras
 {
-    public class HaiKangCamera<T> : BaseCamera<T>
+    public class HaiKangCamera<T> : BaseCamera<T> where T : BaseTriggerData
     {
         public HaiKangCamera() : base()
         {
@@ -207,7 +207,7 @@ namespace BingLibrary.Vision.Cameras
 
             //更新图像Buff大小；
             NecessaryOperBeforeGrab();
-
+            _myCamera.MV_CC_ClearImageBuffer_NET();
             return true;
         }
 
@@ -573,7 +573,7 @@ namespace BingLibrary.Vision.Cameras
                 APublicStaticHelper.CopyMemory(bitmapData.Scan0, m_ConvertDstBuf, (uint)(bitmapData.Stride * m_bitmap.Height));
                 m_bitmap.UnlockBits(bitmapData);
 
-                _myCamera.MV_CC_ClearImageBuffer_NET();
+                //_myCamera.MV_CC_ClearImageBuffer_NET();
             }
             return m_bitmap;
         }
