@@ -43,7 +43,7 @@ namespace BingLibrary.Vision.Cameras
 
         // private IMVDefine.IMV_FrameInfo frameInfo = new IMVDefine.IMV_FrameInfo();
 
-        private static IMVDefine.IMV_FrameCallBack pFrameCallBack;
+        private  IMVDefine.IMV_FrameCallBack pFrameCallBack;
 
         #endregion param
 
